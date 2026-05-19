@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# 🥑 BLW Solids Tracker — HTTP Skill Server
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Motivation
 
-Currently, two official plugins are available:
+Starting complementary feeding can be overwhelming for first-time parents, especially when implementing the Baby-Led Weaning (BLW) method.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This tool helps parents track the introduction of solid foods in a safe, suggested order. It places special emphasis on tracking **potentially allergenic foods**. By using this tool, parents gain peace of mind and clear visibility into which foods have been offered, which were rejected, and which caused allergic reactions.
 
-## React Compiler
+## Concept
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+An **agent-agnostic HTTP Skill Server**. Any AI framework — LangChain, Vercel AI SDK, AutoGen, or a custom agent — can connect to it via standard HTTP and JSON Schema. No vendor lock-in, no MCP, no dashboards.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Quick Start
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Server runs at `http://localhost:3000`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🔌 How Agent Integration Works
+
+### 1. Agent discovers the skill
+
 ```
+GET /api/tools
+```
+
+Returns the full skill contract: available commands, tool names, endpoint URLs, and JSON Schema definitions for every parameter the agent needs to collect.
+
+```json
+{
+  "name": "blw-solids-tracker-skill",
+  "commands": [{ "name": "blw-tracker", "endpoint": "/api/commands/blw-tracker" }],
+  "tools": [{ "name": "getSafeFoods", "endpoint": "/api/tools/get-safe-foods", "parameters": { ... } }]
+}
+```
+
+### 2. Agent initializes the flow
+
+```
+POST /api/commands/blw-tracker
+```
+
+Returns the first conversational prompt. From this point the agent manages the dialogue with the user entirely — no further server calls until the profile is complete.
+
+### 3. Agent collects the profile through conversation 🗣️
+
+The agent asks the user naturally, guided by the JSON Schema from step 1:
+
+| Field | Description |
+|---|---|
+| 👶 Name | Baby's first name |
+| 🗓️ Age | Age in months (min. 6) |
+| 📅 Start date | Planned BLW start date (YYYY-MM-DD) |
+| 🥦 Diet type | `standard`, `vegetarian`, or `vegan` |
+| 📍 Location | Country/region for seasonal food availability |
+| ⚠️ Allergies | Known or suspected food allergies + which foods |
+| ✅ Milestones | Head control, sits with support, grabs objects, shows interest in food |
+
+### 4. Agent executes the tool
+
+```
+POST /api/tools/get-safe-foods
+Body: { "profile": { ... } }
+```
+
+The server validates the profile, runs the safety logic, and returns the food plan. If approved, a printable `BLW_Fridge_Checklist.html` is saved automatically. 🖨️
+
+---
+
+## 📋 Response statuses
+
+| `safetyStatus` | Meaning |
+|---|---|
+| `APPROVED` | Baby is ready — food plan + HTML checklist generated |
+| `BLOCKED_NOT_READY` | Age or milestones not met — agent surfaces the warning to the parent |
+
+---
+
+## ⚠️ Safety notice
+
+- This tool does **not** replace professional medical advice.
+- Always consult your pediatrician before starting solids.
+- Never leave your baby unattended while eating.
+- Prepare all foods in an **age-appropriate size and texture** to prevent choking.

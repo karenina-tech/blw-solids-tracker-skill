@@ -16,8 +16,9 @@ export const BabyProfileSchema = z.object({
   knownAllergies: z.boolean(),
   allergicFoods: z.array(z.string()).default([]),
   developmentalMilestones: MilestoneSchema,
-});
+}).refine(
+  data => !data.knownAllergies || data.allergicFoods.length > 0,
+  { message: "allergicFoods must list at least one item when knownAllergies is true", path: ["allergicFoods"] }
+);
 
 export type BabyProfile = z.infer<typeof BabyProfileSchema>;
-
-//TODO: add a validation for allergicFoods to have min 1 if knonwAllergies is true

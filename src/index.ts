@@ -1,9 +1,14 @@
 // Fastify Server entry point
 //assemble the main server launch script with environment safety layers
 import fastify from 'fastify';
+import cors from '@fastify/cors';
 import { appRoutes } from './routes.js';
 
 const server = fastify({ logger: true });
+
+await server.register(cors, {
+  origin: true // Allows any origin to fetch your tools dynamically
+});
 
 // Register API routes
 server.register(appRoutes);

@@ -1,61 +1,63 @@
-/**
- * 1.JSON shcema definition for the getSafeFoods tool. This schema defines the expected input structure and validation rules for the tool, ensuring that the agent provides all necessary information in the correct format when invoking it.
- */
 export const getSafeFoodsSchema = {
   name: "getSafeFoods",
-  description: "Validates baby physical readiness and returns a curated 30-day safe food dataset based on age and allergies. Do not invent foods.",
+  endpoint: "/api/tools/get-safe-foods",
+  description: "Validates baby physical readiness and returns a curated 30-day safe food dataset based on age, diet, and allergies. Do not invent foods outside the returned dataset.",
   parameters: {
     type: "object",
     properties: {
       profile: {
         type: "object",
-        description: "The complete baby profile collected during onboarding",
-        required: [
-          "name",
-          "ageMonths",
-          "startDate",
-          "dietType",
-          "knownAllergies",
-          "developmentalMilestones"
-        ],
+        description: "The complete baby profile collected during onboarding.",
         properties: {
-          name: { 
-            type: "string", 
-            description: "The name of the baby" 
+          name: {
+            type: "string",
+            description: "The baby's first name."
           },
-          ageMonths: { 
-            type: "number", 
-            description: "Baby's age in months. Must be a valid integer." 
+          ageMonths: {
+            type: "number",
+            description: "Baby's age in whole months. Must be 6 or older."
           },
-          startDate: { 
-            type: "string", 
-            description: "Calendar date to start BLW (YYYY-MM-DD)" 
+          startDate: {
+            type: "string",
+            description: "Planned BLW start date in YYYY-MM-DD format."
           },
-          dietType: { 
-            type: "string", 
+          dietType: {
+            type: "string",
             enum: ["standard", "vegetarian", "vegan"],
-            description: "Household dietary choice"
+            description: "Household dietary preference."
           },
-          knownAllergies: { 
-            type: "boolean", 
-            description: "True if the baby has known or suspected allergies" 
+          location: {
+            type: "string",
+            description: "Country or region for seasonal food availability (e.g. 'Spain', 'Mexico'). Defaults to Spain if omitted.",
+            default: "Spain"
+          },
+          knownAllergies: {
+            type: "boolean",
+            description: "Set to true if the baby has any known or suspected food allergies."
           },
           allergicFoods: {
             type: "array",
             items: { type: "string" },
-            description: "List of specific allergens if knownAllergies is true (e.g., ['egg', 'peanuts'])"
+            description: "Required when knownAllergies is true. List of allergens to exclude (e.g. ['egg', 'peanut', 'milk'])."
           },
           developmentalMilestones: {
             type: "object",
-            description: "Mandatory physical readiness gates. All must be true for approval.",
-            required: ["headControl", "canSitWithMinimalSupport", "reachAndGrab", "showsInterestInFood"],
+            description: "Physical readiness gates. All four must be true to proceed.",
             properties: {
-              headControl: { type: "boolean", description: "Can hold head steady independently" },
-              canSitWithMinimalSupport: { type: "boolean", description: "Can sit upright with minimal support" },
-              reachAndGrab: { type: "boolean", description: "Can grab objects and bring them to mouth" },
-              showsInterestInFood: { type: "boolean", description: "Watches adults intently when eating" }
-            }
+              headControl: { type: "boolean", description: "Baby can hold head steady independently." },
+              canSitWithMinimalSupport: { type: "boolean", description: "Baby can sit upright with minimal support." },
+              reachAndGrab: { type: "boolean", description: "Baby can grab objects and bring them to mouth." },
+              showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows clear interest." }
+            },
+            required: ["headControl", "canSitWithMinimalSupport", "reachAndGrab", "showsInterestInFood"]
           }
+        },
+        required: ["name", "ageMonths", "startDate", "dietType", "knownAllergies", "developmentalMilestones"],
+        if: {
+          properties: { knownAllergies: { const: true } }
+        },
+        then: {
+          required: ["allergicFoods"]
         }
       }
     },
@@ -63,7 +65,4 @@ export const getSafeFoodsSchema = {
   }
 };
 
-/**
- * Maps the tool name to its JSON schema definition. This is the single source of truth for all tools available to the agent.
- */
 export const GLOBAL_TOOL_DEFINITIONS = [getSafeFoodsSchema];

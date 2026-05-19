@@ -1,26 +1,3 @@
-export interface DevelopmentalMilestones {
-  canSitWithMinimalSupport: boolean;
-  headControl: boolean;
-  reachAndGrab: boolean;
-  showsInterestInFood: boolean;
-}
-
-export interface Exclusions {
-  dietaryRestrictions: string[];
-  knownAllergies: string[];
-}
-
-export interface BabyProfile {
-  name: string;
-  ageMonths: number;
-  startDate: string;
-  dietType: 'standard' | 'vegetarian' | 'vegan';
-  feedingMethod: 'breastfed' | 'formula' | 'mixed';
-  location: string;
-  exclusions: Exclusions;
-  developmentalMilestones: DevelopmentalMilestones;
-}
-
 export interface ChecklistItem {
   date: string;
   foodItem: string;

@@ -34,7 +34,7 @@ export function getSafeFoodsTool(input: ToolInput) {
   // 3. Query dataset and filter out allergens the user specified
   const safeFoods = FOOD_DATASET.filter(food => {
     const satisfiesAge = profile.ageMonths >= food.minAgeMonths;
-    const isUserAllergic = profile.knownAllergies.some(allergy => 
+    const isUserAllergic = profile.allergicFoods.some(allergy =>
       food.id.toLowerCase() === allergy.toLowerCase() || food.name.toLowerCase() === allergy.toLowerCase()
     );
     return satisfiesAge && !isUserAllergic;
