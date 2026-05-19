@@ -1,46 +1,60 @@
 import type { FastifyInstance } from 'fastify';
-import { handleUserMessage } from './services/anthropicService.js';
+import { getSafeFoodsTool } from './tools/getSafeFoods.js';
 import { compileHtmlTemplate } from './domain/pdfGenerator.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
 export async function appRoutes(fastify: FastifyInstance) {
   
-  // Endpoint de chat que interactúa con Claude
-  fastify.post('/api/chat', async (request, reply) => {
-    const { messages } = request.body as { messages: any[] };
+  fastify.post('/api/commands/blw-tracker', async (request, reply) => {
+    return reply.code(200).send({
+      command: "blw-tracker",
+      status: "initialized",
+      message: "Pediatric BLW Method Protocol Initialized. Let's set up your profile.",
+      next_step: "onboarding",
+      prompt: "What is your baby's name?"
+    });
+  });
+
+  /**
+   * Agnostic Endpoint: Recive profile data from any Agent, executes strict TypeScript logic, and returns clean JSON data.
+   */
+  fastify.post('/api/tools/get-safe-foods', async (request, reply) => {
+    const { profile } = request.body as { profile: any };
+
+    if (!profile) {
+      return reply.code(400).send({ 
+        error: 'Bad Request', 
+        message: 'Missing required field: profile' 
+      });
+    }
+
     try {
-      const responseContent = await handleUserMessage(messages);
-
-      // --- TRUCO PARA EL MVP: Generación automática de archivo ---
-      // Si en la conversación ya confirmamos que todo está aprobado, generamos el archivo estático
-      const textoFinal = JSON.stringify(responseContent);
-      if (textoFinal.includes("APPROVED") || textoFinal.includes("Calendar")) {
-        
-        // Simulamos los datos del dataset para la plantilla imprimible
-        const mockItems = [
-          { date: "May 18", foodItem: "Avocado (Ripe strips)", category: "Standard" },
-          { date: "May 19", foodItem: "⏰ Egg (Hard-boiled quarters)", category: "Allergen (Day 1/3)" },
-          { date: "May 20", foodItem: "Apple (Steamed tender pieces)", category: "Standard" }
-        ];
-
-        const htmlData = compileHtmlTemplate("Santi", "2026-05-18", mockItems as any);
-        
-        // Guardamos un archivo HTML real en la raíz de tu proyecto
+      const result = getSafeFoodsTool({ profile });
+      // if the baby approves, automatically compile the printable HTML on the server side    
+      if (result.safetyStatus === 'APPROVED') {
+        // Map the safe foods from the returned dataset for the template
+          const htmlData = compileHtmlTemplate(
+          profile.babyName, 
+          profile.startDate, 
+          result.foods as any
+        );
         const outputPath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
         fs.writeFileSync(outputPath, htmlData, 'utf-8');
-        
-        fastify.log.info(`🎯 [MVP SUCCESS] ¡Archivo imprimible generado con éxito en: ${outputPath}!`);
+        fastify.log.info(`📊 Entregable guardado en: ${outputPath}`);
       }
 
-      return reply.code(200).send({ content: responseContent });
+      // Returns JSON to the Agent
+      return reply.code(200).send(result);
     } catch (error: any) {
       fastify.log.error(error);
-      return reply.code(500).send({ error: 'Failed to process agentic routing turn.', message: error.message });
+      return reply.code(400).send({ error: 'Validation Failed', message: error.message });
     }
   });
 
-  // Servir el PDF/HTML directo si se solicita
+  /**
+   * PDF Generation Endpoint
+   */
   fastify.post('/api/generate-pdf', async (request, reply) => {
     const { babyName, startDate, items } = request.body as any;
     const htmlPayload = compileHtmlTemplate(babyName, startDate, items);

@@ -1,6 +1,6 @@
 import { getSafeFoodsTool } from '../tools/getSafeFoods.js';
 
-// Map the tool name coming from Claude directly to our deterministic backend functions
+// Centralized tool execution function that routes calls to the appropriate tool based on the tool name. This abstracts away the individual tool implementations and provides a single interface for the agent to interact with all tools.
 export async function executeTool(toolName: string, toolInput: any) {
   switch (toolName) {
     case 'getSafeFoods':

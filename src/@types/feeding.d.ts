@@ -1,6 +1,6 @@
 export interface DevelopmentalMilestones {
   canSitWithMinimalSupport: boolean;
-  goodHeadControl: boolean;
+  headControl: boolean;
   reachAndGrab: boolean;
   showsInterestInFood: boolean;
 }

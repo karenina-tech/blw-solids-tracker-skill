@@ -1,4 +1,4 @@
-// Tool: Fetches foods appropriate for the specific age bracket
+// Tool: Fetches foods appropriate for the specific age
 import { FOOD_DATASET, type FoodItem } from '../data/foodDataset.js';
 import { BabyProfileSchema, type BabyProfile } from '../schemas/profileSchema.js';
 
@@ -21,7 +21,7 @@ export function getSafeFoodsTool(input: ToolInput) {
 
   // 2. Enforce strict safety milestone gate
   const features = profile.developmentalMilestones;
-  const isPhysicallyReady = features.goodHeadControl && features.canSitWithMinimalSupport && features.reachAndGrab;
+  const isPhysicallyReady = features.headControl && features.canSitWithMinimalSupport && features.reachAndGrab && features.showsInterestInFood;
   
   if (profile.ageMonths < 6 || !isPhysicallyReady) {
     return {
