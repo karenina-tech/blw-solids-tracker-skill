@@ -146,7 +146,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		category: 'Standard',
 		minAgeMonths: 6,
 		preparationByAge: {
-			'6-9': 'Pressed flat with a fork or your fingers.',
+			'6-9': 'Pressed flat with a fork or your fingers or add them to porridge.',
 			'9-12': 'Pressed flat with a fork or your fingers.'
 		},
 		chokingHazardWarning: 'Whole berries are small, round, and firm enough to block the airway.'
@@ -157,7 +157,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		category: 'Standard',
 		minAgeMonths: 6,
 		preparationByAge: {
-			'6-9': 'Pressed flat with a fork or your fingers.',
+			'6-9': 'Pressed flat with a fork or your fingers or add them to porridge.',
 			'9-12': 'Pressed flat with a fork or your fingers.'
 		},
 		chokingHazardWarning: 'Whole blueberries are a top choking risk because of their size and round shape.'

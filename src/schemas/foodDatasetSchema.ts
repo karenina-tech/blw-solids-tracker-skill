@@ -5,13 +5,13 @@ import { z } from 'zod';
  *
  * This is the contract every contributor must satisfy when adding or editing
  * a food in src/data/foodDataset.ts. TypeScript alone cannot enforce things
- * like age-range key format or non-empty preparation instructions — Zod catches
- * those gaps at runtime via `npm run validate:dataset`.
+ * like duplicate ids or cross-field consistency — run `npm run validate:dataset`
+ * before opening a PR to catch all of those.
  */
 
-// Matches "6-9", "9-12", etc. TypeScript's Record<string, string> accepts any
-// string key, so we enforce the format here instead.
-const AGE_RANGE_KEY = /^\d+-\d+$/;
+// Strict allowlist of supported age ranges.
+export const VALID_AGE_RANGES = ['6-9', '9-12'] as const;
+export type AgeRange = (typeof VALID_AGE_RANGES)[number];
 
 export const FoodItemSchema = z.object({
 	// Used as the unique identifier and for allergy matching (case-insensitive).
@@ -34,17 +34,17 @@ export const FoodItemSchema = z.object({
 		.min(0)
 		.max(12, 'Currently only foods for 0-12 months are supported'),
 
-	// Each key is an age range ("6-9", "9-12") mapped to a free-form safety instruction.
-	// At least one range is required, keys must follow the min-max format,
-	// and no instruction can be left blank.
+	// Keys must be one of the declared VALID_AGE_RANGES — no arbitrary ranges allowed.
+	// Instructions cannot be empty or whitespace-only.
 	preparationByAge: z
 		.record(z.string(), z.string())
 		.refine((obj) => Object.keys(obj).length > 0, {
-			message: 'At least one preparation range is required (e.g. { "6-9": "..." })'
+			message: 'At least one preparation range is required'
 		})
-		.refine((obj) => Object.keys(obj).every((k) => AGE_RANGE_KEY.test(k)), {
-			message: 'All keys must follow the "min-max" format (e.g. "6-9", "9-12")'
-		})
+		.refine(
+			(obj) => Object.keys(obj).every((k) => (VALID_AGE_RANGES as readonly string[]).includes(k)),
+			{ message: `Keys must be one of the supported age ranges: ${VALID_AGE_RANGES.join(', ')}` }
+		)
 		.refine((obj) => Object.values(obj).every((v) => v.trim().length > 0), {
 			message: 'Preparation instructions cannot be empty'
 		}),
