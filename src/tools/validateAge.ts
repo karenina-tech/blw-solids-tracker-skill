@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { MilestoneSchema } from '../schemas/profileSchema.js';
 
 const ValidateAgeInputSchema = z.object({
-	ageMonths: z.number().min(0).max(24),
+	ageMonths: z.number().min(0).max(12),
 	developmentalMilestones: MilestoneSchema
 });
 

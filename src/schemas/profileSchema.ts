@@ -9,7 +9,7 @@ export const MilestoneSchema = z.object({
 
 export const BabyProfileSchema = z.object({
   name: z.string().min(1),
-  ageMonths: z.number().min(0).max(24),
+  ageMonths: z.number().min(0).max(12),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD"),
   dietType: z.enum(['standard', 'vegetarian', 'vegan']),
   location: z.string().default('Spain'),

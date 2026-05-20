@@ -15,7 +15,7 @@ export const getSafeFoodsSchema = {
           },
           ageMonths: {
             type: "number",
-            description: "Baby's age in whole months. Must be 6 or older."
+            description: "Baby's age in whole months. Must be between 6 and 12 months (first-introduction range)."
           },
           startDate: {
             type: "string",
@@ -74,7 +74,7 @@ export const validateAgeSchema = {
     properties: {
       ageMonths: {
         type: "number",
-        description: "Baby's age in whole months."
+        description: "Baby's age in whole months. Must be between 6 and 12 months (first-introduction range)."
       },
       developmentalMilestones: {
         type: "object",
@@ -101,7 +101,7 @@ export const getChokingHazardsSchema = {
     properties: {
       ageMonths: {
         type: "number",
-        description: "Baby's age in whole months, used to select the correct preparation method."
+        description: "Baby's age in whole months, used to select the correct preparation method. Must be between 6 and 12 months (first-introduction range)."
       }
     },
     required: ["ageMonths"]

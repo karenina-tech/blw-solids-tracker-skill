@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { FOOD_DATASET } from '../data/foodDataset.js';
 
 const GetChokingHazardsInputSchema = z.object({
-  ageMonths: z.number().min(6).max(24),
+  ageMonths: z.number().min(6).max(12),
 });
 
 type GetChokingHazardsInput = z.infer<typeof GetChokingHazardsInputSchema>;
