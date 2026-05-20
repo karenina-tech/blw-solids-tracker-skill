@@ -17,7 +17,7 @@ const start = async () => {
   try {
     // Port 3000 is clean and industry standard for server backends
     await server.listen({ port: 3000, host: '0.0.0.0' });
-    console.log('🥑 BLW Agentic truth core running live at http://localhost:3000');
+    console.log('🥑 BLW Agentic solids tracker running live at http://localhost:3000');
   } catch (err) {
     server.log.error(err);
     process.exit(1);

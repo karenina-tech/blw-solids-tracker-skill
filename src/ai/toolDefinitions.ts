@@ -65,4 +65,47 @@ export const getSafeFoodsSchema = {
   }
 };
 
-export const GLOBAL_TOOL_DEFINITIONS = [getSafeFoodsSchema];
+export const validateAgeSchema = {
+  name: "validateAge",
+  endpoint: "/api/tools/validate-age",
+  description: "Checks whether a baby meets the minimum age (6 months) and all four physical readiness milestones required for Baby-Led Weaning. Call this before getSafeFoods to confirm the baby is ready.",
+  parameters: {
+    type: "object",
+    properties: {
+      ageMonths: {
+        type: "number",
+        description: "Baby's age in whole months."
+      },
+      developmentalMilestones: {
+        type: "object",
+        description: "Physical readiness gates. All four must be true to proceed.",
+        properties: {
+          headControl: { type: "boolean", description: "Baby can hold head steady independently." },
+          canSitWithMinimalSupport: { type: "boolean", description: "Baby can sit upright with minimal support." },
+          reachAndGrab: { type: "boolean", description: "Baby can grab objects and bring them to mouth." },
+          showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows clear interest." }
+        },
+        required: ["headControl", "canSitWithMinimalSupport", "reachAndGrab", "showsInterestInFood"]
+      }
+    },
+    required: ["ageMonths", "developmentalMilestones"]
+  }
+};
+
+export const getChokingHazardsSchema = {
+  name: "getChokingHazards",
+  endpoint: "/api/tools/get-choking-hazards",
+  description: "Returns age-appropriate food preparation instructions and choking hazard warnings for all foods in the dataset. Call this after getSafeFoods to give parents safe preparation guidance.",
+  parameters: {
+    type: "object",
+    properties: {
+      ageMonths: {
+        type: "number",
+        description: "Baby's age in whole months, used to select the correct preparation method."
+      }
+    },
+    required: ["ageMonths"]
+  }
+};
+
+export const GLOBAL_TOOL_DEFINITIONS = [getSafeFoodsSchema, validateAgeSchema, getChokingHazardsSchema];

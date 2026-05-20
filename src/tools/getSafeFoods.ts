@@ -1,6 +1,6 @@
-// Tool: Fetches foods appropriate for the specific age
-import { FOOD_DATASET, type FoodItem } from '../data/foodDataset.js';
+import { FOOD_DATASET } from '../data/foodDataset.js';
 import { BabyProfileSchema, type BabyProfile } from '../schemas/profileSchema.js';
+import { checkBLWReadiness } from './validateAge.js';
 
 interface ToolInput {
   profile: BabyProfile;
@@ -20,10 +20,8 @@ export function getSafeFoodsTool(input: ToolInput) {
   const profile = validation.data;
 
   // 2. Enforce strict safety milestone gate
-  const features = profile.developmentalMilestones;
-  const isPhysicallyReady = features.headControl && features.canSitWithMinimalSupport && features.reachAndGrab && features.showsInterestInFood;
-  
-  if (profile.ageMonths < 6 || !isPhysicallyReady) {
+  const readiness = checkBLWReadiness(profile.ageMonths, profile.developmentalMilestones);
+  if (!readiness.isReady) {
     return {
       success: false,
       safetyStatus: "BLOCKED_NOT_READY",
