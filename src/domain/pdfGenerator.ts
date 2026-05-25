@@ -4,12 +4,11 @@ export function compileHtmlTemplate(babyName: string, startDate: string, items: 
   const tableRowsHtml = items.map(item => {
     const isAllergen = item.category.startsWith('Allergen');
     const badgeClass = isAllergen ? 'badge-allergen' : 'badge-standard';
-    const clockPrefix = isAllergen ? '⏰ ' : '';
 
     return `
       <tr>
         <td class="col-date">${item.date}</td>
-        <td class="col-food">${clockPrefix}${item.foodItem}</td>
+        <td class="col-food">${item.foodItem}</td>
         <td class="col-cat"><span class="badge ${badgeClass}">${item.category}</span></td>
         <td class="col-chk">○</td>
         <td class="col-chk">○</td>

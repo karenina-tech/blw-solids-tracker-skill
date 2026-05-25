@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { getSafeFoodsTool } from './tools/getSafeFoods.js';
 import { validateAgeTool } from './tools/validateAge.js';
 import { getChokingHazardsTool } from './tools/getChokingHazards.js';
+import { generate30DayPlan } from './domain/blwEngine.js';
 import { compileHtmlTemplate } from './domain/pdfGenerator.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -57,18 +58,18 @@ export async function appRoutes(fastify: FastifyInstance) {
 		}
 
 		try {
-			// Execute internal TS logic & domain validation
 			const result = getSafeFoodsTool({ profile });
-			// if the baby approves, automatically compile the printable HTML on the server side
+
 			if (result.safetyStatus === 'APPROVED') {
-				// Map the safe foods from the returned dataset for the template
-				const htmlData = compileHtmlTemplate(profile.name, profile.startDate, result.foods as any);
+				const plan = generate30DayPlan(result.foods as any, profile.startDate, profile.ageMonths);
+				const htmlData = compileHtmlTemplate(profile.name, profile.startDate, plan);
 				const outputPath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
 				fs.writeFileSync(outputPath, htmlData, 'utf-8');
 				fastify.log.info(`📊 Entregable guardado en: ${outputPath}`);
+				const checklistUrl = `http://${request.headers.host}/api/checklist`;
+				return reply.code(200).send({ ...result, plan, checklistUrl });
 			}
 
-			// Return clean JSON for the Agent to parse and speak back to the parent
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);
@@ -120,6 +121,27 @@ export async function appRoutes(fastify: FastifyInstance) {
 			fastify.log.error(error);
 			return reply.code(400).send({ error: 'Validation Failed', message: error.message });
 		}
+	});
+
+	// Serves the last generated checklist as a downloadable HTML page.
+	fastify.get('/api/checklist', async (_request, reply) => {
+		const filePath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
+		if (!fs.existsSync(filePath)) {
+			return reply.code(404).send({ error: 'No checklist found. Run get-safe-foods first.' });
+		}
+		reply.header('Content-Type', 'text/html');
+		return reply.code(200).send(fs.readFileSync(filePath, 'utf-8'));
+	});
+
+	// Serves the agent system prompt with today's date injected.
+	fastify.get('/api/prompt', async (_request, reply) => {
+		const promptPath = path.join(process.cwd(), 'prompts', 'blw-orchestrator.md');
+		if (!fs.existsSync(promptPath)) {
+			return reply.code(404).send({ error: 'Prompt file not found.' });
+		}
+		const today = new Date().toISOString().split('T')[0];
+		const prompt = fs.readFileSync(promptPath, 'utf-8').replace('{{TODAY}}', today);
+		return reply.code(200).send({ prompt });
 	});
 
 	/**

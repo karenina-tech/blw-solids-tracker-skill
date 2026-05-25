@@ -12,7 +12,6 @@ export const BabyProfileSchema = z.object({
   ageMonths: z.number().min(0).max(12),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD"),
   dietType: z.enum(['standard', 'vegetarian', 'vegan']),
-  location: z.string().default('Spain'),
   knownAllergies: z.boolean(),
   allergicFoods: z.array(z.string()).default([]),
   developmentalMilestones: MilestoneSchema,

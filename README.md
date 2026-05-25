@@ -59,7 +59,6 @@ The agent asks the user naturally, guided by the JSON Schema from step 1:
 | 🗓️ Age | Age in months (min. 6) |
 | 📅 Start date | Planned BLW start date (YYYY-MM-DD) |
 | 🥦 Diet type | `standard`, `vegetarian`, or `vegan` |
-| 📍 Location | Country/region for seasonal food availability |
 | ⚠️ Allergies | Known or suspected food allergies + which foods |
 | ✅ Milestones | Head control, sits with support, grabs objects, shows interest in food |
 

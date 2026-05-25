@@ -26,11 +26,6 @@ export const getSafeFoodsSchema = {
             enum: ["standard", "vegetarian", "vegan"],
             description: "Household dietary preference."
           },
-          location: {
-            type: "string",
-            description: "Country or region for seasonal food availability (e.g. 'Spain', 'Mexico'). Defaults to Spain if omitted.",
-            default: "Spain"
-          },
           knownAllergies: {
             type: "boolean",
             description: "Set to true if the baby has any known or suspected food allergies."
