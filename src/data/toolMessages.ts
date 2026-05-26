@@ -3,6 +3,11 @@
  * Edit the text here without touching any tool logic.
  */
 export const TOOL_MESSAGES = {
+	AGE_TOO_YOUNG_NOTE:
+		'Thank you for sharing that with me! Based on current guidelines from the WHO and the AAP, the minimum recommended age to start solid foods is 6 months. ' +
+		'At this stage, milk — breast or formula — provides everything your baby needs for healthy development. ' +
+		'There is no nutritional benefit to starting earlier, and waiting gives your baby\'s digestive system the time it needs to mature safely. ' +
+		'Come back when your baby is closer to 6 months — we will be here to guide you through every step!',
 	EXCLUSIVE_BREASTFEEDING_NOTE:
 		'Exclusive breastfeeding provides complete nutrition for babies under 6 months and is strongly recommended by both the WHO and the AAP as the sole source of nutrition during this period. ' +
 		'Current evidence shows no nutritional benefit to introducing solids before 6 months for exclusively breastfed babies — in fact, early introduction can interfere with milk supply and the natural development of the digestive system. ' +

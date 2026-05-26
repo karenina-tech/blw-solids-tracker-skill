@@ -23,10 +23,28 @@ export function getSafeFoodsTool(input: ToolInput) {
   // 2. Enforce strict safety milestone gate
   const readiness = checkBLWReadiness(profile.ageMonths, profile.developmentalMilestones, profile.feedingType);
   if (!readiness.isReady) {
+    const missing: string[] = [];
+    if (!profile.developmentalMilestones.headControl)              missing.push("hasn't developed full head control yet");
+    if (!profile.developmentalMilestones.canSitWithMinimalSupport) missing.push("isn't sitting upright with minimal support yet");
+    if (!profile.developmentalMilestones.reachAndGrab)             missing.push("hasn't started reaching and grabbing yet");
+
+    const markerList = missing.length > 0
+      ? missing.map(m => `• ${profile.name} ${m}`).join('\n')
+      : '• does not meet one or more physical readiness markers';
+
+    const note =
+      `Thank you for taking the time to go through this with me.\n\n` +
+      `Based on what you shared, it looks like ${profile.name} might need just a little more time before starting solid foods. ` +
+      `This is completely normal — every baby develops at their own pace, and there is no rush!\n\n` +
+      `Here is what we noticed:\n${markerList}\n\n` +
+      `The good news is that most babies reach these milestones within the next few weeks. ` +
+      `Starting solids at the right moment makes the whole experience safer and more enjoyable for both of you.\n\n` +
+      `Come back whenever ${profile.name} is ready — we will be here!`;
+
     return {
       success: false,
       safetyStatus: "BLOCKED_NOT_READY",
-      warningMessage: "CRITICAL ALERT: Infant does not meet physical readiness or age markers for Baby-Led Weaning. Hold solid introduction."
+      note
     };
   }
 

@@ -86,9 +86,10 @@ export async function appRoutes(fastify: FastifyInstance) {
 	/**
 	 * Early stop endpoint validation: only needs ageMonths + milestones. If BLOCKED, agent stops here. */
 	fastify.post('/api/tools/validate-age', async (request, reply) => {
-		const { ageMonths, developmentalMilestones } = request.body as {
+		const { ageMonths, developmentalMilestones, feedingType } = request.body as {
 			ageMonths: any;
 			developmentalMilestones: any;
+			feedingType?: 'formula' | 'exclusive_breastfeeding';
 		};
 
 		if (ageMonths === undefined || !developmentalMilestones) {
@@ -99,7 +100,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 		}
 
 		try {
-			const result = validateAgeTool({ ageMonths, developmentalMilestones });
+			const result = validateAgeTool({ ageMonths, developmentalMilestones, feedingType });
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);

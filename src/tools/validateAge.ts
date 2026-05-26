@@ -32,16 +32,17 @@ export function checkBLWReadiness(
 	return { isReady: ageOk && milestonesOk, ageOk, milestonesOk, requiresFeedingType: false };
 }
 
+// validateAgeTool evaluates age and feeding type only.
+// Milestone evaluation is the exclusive responsibility of getSafeFoods.
 export function validateAgeTool(input: ValidateAgeInput) {
 	const validation = ValidateAgeInputSchema.safeParse(input);
 	if (!validation.success) {
 		return { success: false, error: 'Invalid input', details: validation.error };
 	}
 
-	const { ageMonths, developmentalMilestones, feedingType } = validation.data;
-	const readiness = checkBLWReadiness(ageMonths, developmentalMilestones, feedingType);
+	const { ageMonths, feedingType } = validation.data;
 
-	if (readiness.requiresFeedingType) {
+	if (ageMonths === 5 && feedingType === undefined) {
 		return {
 			success: false,
 			safetyStatus: 'REQUIRES_FEEDING_TYPE',
@@ -49,24 +50,23 @@ export function validateAgeTool(input: ValidateAgeInput) {
 		};
 	}
 
-	if (!readiness.isReady) {
+	const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
+//TODO REVIEW THE CONDITION FOR THE NOTE
+	if (!ageOk) {
 		const isBreastfeedingBlock = ageMonths === 5 && feedingType === 'exclusive_breastfeeding';
 		return {
 			success: false,
 			safetyStatus: 'BLOCKED_NOT_READY',
-			ageOk: readiness.ageOk,
-			milestonesOk: readiness.milestonesOk,
-			note: isBreastfeedingBlock ? TOOL_MESSAGES.EXCLUSIVE_BREASTFEEDING_NOTE : undefined,
-			warningMessage:
-				'CRITICAL ALERT: Infant does not meet physical readiness or age markers for Baby-Led Weaning. Hold solid introduction.'
+			ageOk: false,
+			note: isBreastfeedingBlock
+				? TOOL_MESSAGES.EXCLUSIVE_BREASTFEEDING_NOTE
+				: TOOL_MESSAGES.AGE_TOO_YOUNG_NOTE
 		};
 	}
 
 	return {
 		success: true,
 		safetyStatus: 'APPROVED',
-		ageMonths,
-		milestonesOk: true,
-		message: 'Baby meets all physical readiness criteria for BLW.'
+		ageOk: true
 	};
 }
