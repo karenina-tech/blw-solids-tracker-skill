@@ -35,6 +35,11 @@ export const getSafeFoodsSchema = {
             items: { type: "string" },
             description: "Required when knownAllergies is true. List of allergens to exclude (e.g. ['egg', 'peanut', 'milk'])."
           },
+          feedingType: {
+            type: "string",
+            enum: ["formula", "exclusive_breastfeeding"],
+            description: "Include when ageMonths is 5. Collected after the REQUIRES_FEEDING_TYPE gate."
+          },
           developmentalMilestones: {
             type: "object",
             description: "Physical readiness gates. All four must be true to proceed.",
@@ -42,7 +47,7 @@ export const getSafeFoodsSchema = {
               headControl: { type: "boolean", description: "Baby can hold head steady independently." },
               canSitWithMinimalSupport: { type: "boolean", description: "Baby can sit upright with minimal support." },
               reachAndGrab: { type: "boolean", description: "Baby can grab objects and bring them to mouth." },
-              showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows clear interest." }
+              showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows interest. Informational only — does not block approval." }
             },
             required: ["headControl", "canSitWithMinimalSupport", "reachAndGrab", "showsInterestInFood"]
           }
@@ -69,7 +74,12 @@ export const validateAgeSchema = {
     properties: {
       ageMonths: {
         type: "number",
-        description: "Baby's age in whole months. Must be between 6 and 12 months (first-introduction range)."
+        description: "Baby's age in whole months. Must be between 0 and 12 months."
+      },
+      feedingType: {
+        type: "string",
+        enum: ["formula", "exclusive_breastfeeding"],
+        description: "Required only when ageMonths is 5. Determines eligibility: formula allows through, exclusive_breastfeeding blocks."
       },
       developmentalMilestones: {
         type: "object",
@@ -78,7 +88,7 @@ export const validateAgeSchema = {
           headControl: { type: "boolean", description: "Baby can hold head steady independently." },
           canSitWithMinimalSupport: { type: "boolean", description: "Baby can sit upright with minimal support." },
           reachAndGrab: { type: "boolean", description: "Baby can grab objects and bring them to mouth." },
-          showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows clear interest." }
+          showsInterestInFood: { type: "boolean", description: "Baby watches adults eating and shows interest. Informational only — does not block approval." }
         },
         required: ["headControl", "canSitWithMinimalSupport", "reachAndGrab", "showsInterestInFood"]
       }

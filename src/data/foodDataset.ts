@@ -100,6 +100,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'beef',
 		name: 'Beef',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9':
@@ -112,6 +113,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'beef-liver',
 		name: 'Beef Liver',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Cooked thoroughly and pureed, or cut into a smooth paste to spread on toast strips.',
@@ -271,6 +273,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'chicken',
 		name: 'Chicken',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9':
@@ -349,6 +352,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'egg',
 		name: 'Egg',
 		category: 'Allergen',
+		dietaryType: 'vegetarian',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Hard-boiled egg cut into quarters lengthwise or omelet strips.',
@@ -382,6 +386,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'fish',
 		name: 'Fish',
 		category: 'Allergen',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Fully cooked and completely deboned, cut into strips about 2 fingers wide.',
@@ -425,6 +430,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'turkey',
 		name: 'Turkey',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Mix into a soft meatball or patty shape cooked until tender.',
@@ -467,6 +473,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'lamb',
 		name: 'Lamb',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Serve a large piece on a bone (meat cartilage removed) or a thick strip of soft meat.',
@@ -661,6 +668,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'pork',
 		name: 'Pork',
 		category: 'Standard',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Serve a large, thick chop bone or strip with no loose parts, or ground pork meatball.',
@@ -746,6 +754,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'shrimp',
 		name: 'Shrimp',
 		category: 'Allergen',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Remove head, vein, shell. Chop finely and mix into a soft, easy-to-chew meatball or patty.',
@@ -768,6 +777,7 @@ export const FOOD_DATASET: FoodItem[] = [
 		id: 'squid',
 		name: 'Squid',
 		category: 'Allergen',
+		dietaryType: 'standard',
 		minAgeMonths: 6,
 		preparationByAge: {
 			'6-9': 'Cook until completely tender, chop extremely fine, and mix into a soft recipe or puree.',

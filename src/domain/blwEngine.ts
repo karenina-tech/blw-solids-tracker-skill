@@ -32,9 +32,9 @@ function shiftDateByDays(date: string, daysToAdd: number): string {
 
 // Returns the checklist category label for a given allergen trial day.
 function getAllergenDayLabel(trialDay: 1 | 2 | 3): ChecklistItem['category'] {
-	if (trialDay === 1) return 'Allergen (Day 1/3)';
-	if (trialDay === 2) return 'Allergen (Day 2/3)';
-	return 'Allergen (Day 3/3)';
+	if (trialDay === 1) return 'Allergen (1/3)';
+	if (trialDay === 2) return 'Allergen (2/3)';
+	return 'Allergen (3/3)';
 }
 
 /**
@@ -44,12 +44,24 @@ function getAllergenDayLabel(trialDay: 1 | 2 | 3): ChecklistItem['category'] {
  * Step 2 — For each allergen: 3 trial days, then 3 standard-food buffer days.
  * Step 3 — Fill the rest of the 30 days by cycling through standard foods.
  */
-export function generate30DayPlan(foods: FoodItem[], startDate: string, ageMonths: number): ChecklistItem[] {
-	const allergens = foods.filter((food) => food.category === 'Allergen');
+// Fisher-Yates shuffle — returns a new shuffled array, does not mutate the original.
+function shuffle<T>(arr: T[]): T[] {
+	const result = [...arr];
+	for (let i = result.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[result[i], result[j]] = [result[j], result[i]];
+	}
+	return result;
+}
 
-	// Mild foods (no choking hazard) go first so the warm-up days start gentle.
-	const mildStandards = foods.filter((food) => food.category === 'Standard' && !food.chokingHazardWarning);
-	const otherStandards = foods.filter((food) => food.category === 'Standard' && !!food.chokingHazardWarning);
+export function generate30DayPlan(foods: FoodItem[], startDate: string, ageMonths: number): ChecklistItem[] {
+	// Shuffle allergens so they appear in a different order each time.
+	const allergens = shuffle(foods.filter((food) => food.category === 'Allergen'));
+
+	// Mild foods (no choking hazard) still go first for the warm-up days, but
+	// both groups are shuffled so the order varies across checklist generations.
+	const mildStandards = shuffle(foods.filter((food) => food.category === 'Standard' && !food.chokingHazardWarning));
+	const otherStandards = shuffle(foods.filter((food) => food.category === 'Standard' && !!food.chokingHazardWarning));
 	const orderedStandards = [...mildStandards, ...otherStandards];
 
 	// If there are no standard foods at all, cycle through everything so the plan

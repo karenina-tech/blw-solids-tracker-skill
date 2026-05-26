@@ -49,6 +49,10 @@ export const FoodItemSchema = z.object({
 			message: 'Preparation instructions cannot be empty'
 		}),
 
+	// Determines which dietary profiles can receive this food.
+	// Omit on plant-based foods — defaults to 'vegan' (the safest/broadest match).
+	dietaryType: z.enum(['vegan', 'vegetarian', 'standard']).optional(),
+
 	// Only include when there is a specific, named cutting or texture risk for this food.
 	// Omit entirely rather than leaving an empty string.
 	chokingHazardWarning: z.string().min(1, 'Must be a non-empty warning or omitted entirely').optional()

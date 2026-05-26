@@ -14,6 +14,7 @@ export const BabyProfileSchema = z.object({
   dietType: z.enum(['standard', 'vegetarian', 'vegan']),
   knownAllergies: z.boolean(),
   allergicFoods: z.array(z.string()).default([]),
+  feedingType: z.enum(['formula', 'exclusive_breastfeeding']).optional(),
   developmentalMilestones: MilestoneSchema,
 }).refine(
   data => !data.knownAllergies || data.allergicFoods.length > 0,

@@ -65,6 +65,12 @@ export async function appRoutes(fastify: FastifyInstance) {
 				const htmlData = compileHtmlTemplate(profile.name, profile.startDate, plan);
 				const outputPath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
 				fs.writeFileSync(outputPath, htmlData, 'utf-8');
+				const nameSlug = profile.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+				fs.writeFileSync(
+					path.join(process.cwd(), 'BLW_Checklist_Meta.json'),
+					JSON.stringify({ nameSlug }),
+					'utf-8'
+				);
 				fastify.log.info(`📊 Entregable guardado en: ${outputPath}`);
 				const checklistUrl = `http://${request.headers.host}/api/checklist`;
 				return reply.code(200).send({ ...result, plan, checklistUrl });
@@ -123,13 +129,18 @@ export async function appRoutes(fastify: FastifyInstance) {
 		}
 	});
 
-	// Serves the last generated checklist as a downloadable HTML page.
+	// Serves the last generated checklist. Content-Disposition uses the baby's name slug.
 	fastify.get('/api/checklist', async (_request, reply) => {
 		const filePath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
 		if (!fs.existsSync(filePath)) {
 			return reply.code(404).send({ error: 'No checklist found. Run get-safe-foods first.' });
 		}
+		const metaPath = path.join(process.cwd(), 'BLW_Checklist_Meta.json');
+		const nameSlug = fs.existsSync(metaPath)
+			? (JSON.parse(fs.readFileSync(metaPath, 'utf-8')) as { nameSlug: string }).nameSlug
+			: 'baby';
 		reply.header('Content-Type', 'text/html');
+		reply.header('Content-Disposition', `inline; filename="${nameSlug}-blw-checklist.html"`);
 		return reply.code(200).send(fs.readFileSync(filePath, 'utf-8'));
 	});
 
