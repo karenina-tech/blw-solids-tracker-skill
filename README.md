@@ -25,7 +25,6 @@ Server runs at `http://localhost:3000`.
 
 ## ✨ Key Features
 
-- **Zero-State Security Gate:** Implemented an agnostic server-side intent filter. It intercepts incoming chat messages to prevent scope creep and off-topic AI queries, saving token costs and maintaining strict workflow boundaries without storing user API keys on the server.
 - **Agent-agnostic HTTP surface:** Any framework that can read JSON Schema and make HTTP calls works out of the box.
 - **Double-enforced safety gates:** Every tool re-validates its own preconditions independently — the server never trusts that a prior step was called.
 - **Formula exception at 5 months:** Formula-fed babies who meet all physical milestones are eligible one month early, consistent with WHO/AAP guidance.
@@ -35,16 +34,6 @@ Server runs at `http://localhost:3000`.
 ---
 
 ## 🔌 How Agent Integration Works
-
-### Step 0 — Intent guard (every user message)
-
-```
-POST /api/tools/validate-intent
-Authorization: Bearer <agent-api-key>
-Body: { "message": "..." }
-```
-
-Before calling any tool, the agent sends the raw user message to this endpoint. The server forwards it to an LLM (defaults to OpenRouter + GPT-4o-mini) using the agent's own API key — nothing is stored server-side. Returns `{ allowed: true }` to proceed, or `{ allowed: false, reply }` with a message to send back to the user.
 
 ### Step 1 — Agent discovers the skill
 
@@ -58,7 +47,7 @@ Returns the full skill contract: available commands, tool names, endpoint URLs, 
 {
   "name": "blw-solids-tracker-skill",
   "commands": [{ "name": "blw-tracker", "endpoint": "/api/commands/blw-tracker" }],
-  "tools": [{ "name": "validateIntent", "endpoint": "/api/tools/validate-intent", "parameters": { "..." } }]
+  "tools": [{ "name": "getSafeFoods", "endpoint": "/api/tools/get-safe-foods", "parameters": { "..." } }]
 }
 ```
 
