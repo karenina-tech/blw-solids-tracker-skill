@@ -12,7 +12,7 @@ This tool helps parents track the introduction of solid foods in a safe, suggest
   <p><strong>Header & Intro:</strong></p>
   <img src="./assets/preview-header.png" alt="Header" width="500px">
   <br><br>
-  <p><strong>30-Day Tracking Table:</strong></p>
+  <p><strong>30-Day Tracking Table and Footer:</strong></p>
   <img src="./assets/preview-footer.png" alt="Table Rows" width="500px">
 </details>
 
