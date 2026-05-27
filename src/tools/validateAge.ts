@@ -51,7 +51,7 @@ export function validateAgeTool(input: ValidateAgeInput) {
 	}
 
 	const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
-//TODO REVIEW THE CONDITION FOR THE NOTE
+
 	if (!ageOk) {
 		const isBreastfeedingBlock = ageMonths === 5 && feedingType === 'exclusive_breastfeeding';
 		return {
@@ -64,9 +64,11 @@ export function validateAgeTool(input: ValidateAgeInput) {
 		};
 	}
 
+	const isEarlyFormula = ageMonths === 5 && feedingType === 'formula';
 	return {
 		success: true,
 		safetyStatus: 'APPROVED',
-		ageOk: true
+		ageOk: true,
+		note: isEarlyFormula ? TOOL_MESSAGES.FORMULA_5M_DISCLAIMER : undefined
 	};
 }

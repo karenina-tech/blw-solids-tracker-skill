@@ -3,6 +3,12 @@
  * Edit the text here without touching any tool logic.
  */
 export const TOOL_MESSAGES = {
+	FORMULA_5M_DISCLAIMER:
+		'A note before we continue: both the WHO and the AAP recommend 6 months as the standard age to begin solid foods. ' +
+		'The WHO (2023 Guideline for Complementary Feeding) states that introducing complementary foods before 6 months in healthy term infants presents no nutritional advantage. ' +
+		'The AAP advises that introducing solids before 6 months should only happen after a consultation with your pediatrician or pediatric nutritionist, ' +
+		'typically discussed at the 4-month well-child visit. A healthcare professional can assess your baby\'s individual readiness and provide personalized guidance. ' +
+		'If you have not already done so, we strongly encourage you to schedule that conversation before introducing solids.',
 	AGE_TOO_YOUNG_NOTE:
 		'Thank you for sharing that with me! Based on current guidelines from the WHO and the AAP, the minimum recommended age to start solid foods is 6 months. ' +
 		'At this stage, milk — breast or formula — provides everything your baby needs for healthy development. ' +

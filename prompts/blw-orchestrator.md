@@ -19,7 +19,8 @@ You must collect **all** variables below before executing any backend logic. Ask
    - **Immediately after receiving this answer**, call `validateAge` with the collected `ageMonths` and all milestones set to `false` (milestones are not yet known). This is a pure age gate.
    - If `validateAge` returns `safetyStatus: "REQUIRES_FEEDING_TYPE"`: proceed to Step 1b before continuing.
    - If `validateAge` returns `safetyStatus: "BLOCKED_NOT_READY"`: apply the `BLOCKED_NOT_READY` routing rule and **stop**. Do not proceed to Step 2 or any further questions.
-   - If `validateAge` returns `ageOk: true`: continue to Step 2.
+   - If `validateAge` returns `ageOk: true` and the response contains a `note` field: output the exact text from `note` as a standalone paragraph, then continue to Step 2.
+   - If `validateAge` returns `ageOk: true` and there is no `note`: continue to Step 2.
 
 1b. **Feeding Type (conditional — only asked if `validateAge` returns `REQUIRES_FEEDING_TYPE`):**
    - Ask: "One more question before we continue — is your baby currently taking formula, or are they exclusively breastfed?"
