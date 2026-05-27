@@ -8,7 +8,7 @@ This tool helps parents track the introduction of solid foods in a safe, suggest
 
 ## Concept
 
-An **agent-agnostic HTTP Skill Server**. Any AI framework — LangChain, Vercel AI SDK, AutoGen, or a custom agent — can connect to it via standard HTTP and JSON Schema. No vendor lock-in, no MCP, no dashboards.
+An **agent-agnostic HTTP Skill Server**. Any AI framework (LangChain, Vercel AI SDK, AutoGen, or a custom agent) can connect to it via standard HTTP and JSON Schema.
 
 ---
 
@@ -26,8 +26,8 @@ Server runs at `http://localhost:3000`.
 ## ✨ Key Features
 
 - **Agent-agnostic HTTP surface:** Any framework that can read JSON Schema and make HTTP calls works out of the box.
-- **Double-enforced safety gates:** Every tool re-validates its own preconditions independently — the server never trusts that a prior step was called.
-- **Formula exception at 5 months:** Formula-fed babies who meet all physical milestones are eligible one month early, consistent with WHO/AAP guidance.
+- **Independent Safety Gates:** Every tool validates its own data automatically. The server never assumes a previous step was completed, ensuring maximum safety.
+- **Formula exception at 5 months:** Babies on formula can start early if they pass all physical milestones, matching official pediatric guidance.
 - **Diet and allergen filtering:** The food dataset is filtered by dietary preference (standard / vegetarian / vegan) and any declared allergens before the plan is built.
 - **Printable 30-day checklist:** On approval, a `BLW_Fridge_Checklist.html` is generated automatically and served at `/api/checklist`.
 
@@ -57,7 +57,7 @@ Returns the full skill contract: available commands, tool names, endpoint URLs, 
 POST /api/commands/blw-tracker
 ```
 
-Returns the first conversational prompt. From this point the agent manages the dialogue with the user entirely — no further server calls until the profile is complete.
+Returns the first message. After this, the AI agent talks to the user on its own and doesn't call the server again until the profile is completely finished.
 
 ### Step 3 — Agent collects the profile through conversation 🗣️
 
