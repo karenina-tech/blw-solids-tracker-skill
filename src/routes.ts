@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { getSafeFoodsTool } from './tools/getSafeFoods.js';
 import { validateAgeTool } from './tools/validateAge.js';
 import { getChokingHazardsTool } from './tools/getChokingHazards.js';
+import { validateUserIntent } from './tools/validateUserIntent.js';
 import { generate30DayPlan } from './domain/blwEngine.js';
 import { compileHtmlTemplate } from './domain/pdfGenerator.js';
 import * as fs from 'fs';
@@ -127,6 +128,41 @@ export async function appRoutes(fastify: FastifyInstance) {
 		} catch (error: any) {
 			fastify.log.error(error);
 			return reply.code(400).send({ error: 'Validation Failed', message: error.message });
+		}
+	});
+
+	/**
+	 * Intent Guard: Validates that the user's message is about building the checklist.
+	 * The agent passes its own LLM API key in the Authorization header — no server-side key required.
+	 * The base URL and model default to OpenRouter + GPT-4o-mini but can be overridden in the request body.
+	 */
+	fastify.post('/api/tools/validate-intent', async (request, reply) => {
+		const authHeader = request.headers.authorization;
+		const agentApiKey = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+		if (!agentApiKey) {
+			return reply.code(401).send({
+				error: 'Unauthorized',
+				message: 'Pass your LLM API key in the Authorization header as: Bearer <your-key>.'
+			});
+		}
+
+		const { message, baseUrl, model } = request.body as {
+			message?: string;
+			baseUrl?: string;
+			model?: string;
+		};
+
+		if (!message) {
+			return reply.code(400).send({ error: 'Bad Request', message: 'Missing required field: message.' });
+		}
+
+		try {
+			const result = await validateUserIntent(message, agentApiKey, baseUrl, model);
+			return reply.code(200).send(result);
+		} catch (error: any) {
+			fastify.log.error(error);
+			return reply.code(500).send({ error: 'Intent validation failed.', message: error.message });
 		}
 	});
 
