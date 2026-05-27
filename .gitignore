@@ -25,6 +25,19 @@ dist-ssr
 
 # env files
 .env
+.env.local
+.env.*.local
+
+# Test coverage output
+coverage/
+
+# Runtime-generated checklist output — created fresh on each approved get-safe-foods call
+BLW_Fridge_Checklist.html
+BLW_Checklist_Meta.json
+
+# Local development test files
+test-agent.html
+test-mock.html
 
 # Local Claude context
 .claude/

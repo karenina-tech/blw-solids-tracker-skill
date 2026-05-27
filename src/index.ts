@@ -1,5 +1,4 @@
-// Fastify Server entry point
-//assemble the main server launch script with environment safety layers
+import 'dotenv/config';
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { appRoutes } from './routes.js';
@@ -16,8 +15,9 @@ server.register(appRoutes);
 const start = async () => {
   try {
     // Port 3000 is clean and industry standard for server backends
-    await server.listen({ port: 3000, host: '0.0.0.0' });
-    console.log('🥑 BLW Agentic solids tracker running live at http://localhost:3000');
+    const port = parseInt(process.env.PORT ?? '3000', 10);
+    await server.listen({ port, host: '0.0.0.0' });
+    console.log(`🥑 BLW Solids Tracker running at http://localhost:${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
