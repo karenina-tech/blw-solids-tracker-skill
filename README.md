@@ -16,6 +16,14 @@ This tool helps parents track the introduction of solid foods in a safe, suggest
   <img src="./assets/preview-footer.png" alt="Table Rows" width="500px">
 </details>
 
+## 👨‍👩‍👧 Not a developer?
+
+If you just want to generate a BLW checklist for your baby — no setup, no AI subscription, no server — use the companion web app instead:
+
+**[blw-solids-tracker-web](https://github.com/KareninaTech/blw-solids-tracker-web)** — open the link, fill in a short form, and download your personalised 30-day checklist. Free, open source, runs entirely in the browser.
+
+---
+
 ## Concept
 
 An **agent-agnostic HTTP Skill Server**. Any AI framework (LangChain, Vercel AI SDK, AutoGen, or a custom agent) can connect to it via standard HTTP and JSON Schema.
