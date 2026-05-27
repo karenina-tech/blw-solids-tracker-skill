@@ -6,6 +6,16 @@ Starting complementary feeding can be overwhelming for first-time parents, espec
 
 This tool helps parents track the introduction of solid foods in a safe, suggested order. It places special emphasis on tracking **potentially allergenic foods**. By using this tool, parents gain peace of mind and clear visibility into which foods have been offered, which were rejected, and which caused allergic reactions.
 
+<details>
+  <summary>📸 Click to view the printable PDF design templates</summary>
+  <br>
+  <p><strong>Header & Intro:</strong></p>
+  <img src="./assets/preview-header.png" alt="Header" width="500px">
+  <br><br>
+  <p><strong>30-Day Tracking Table:</strong></p>
+  <img src="./assets/preview-footer.png" alt="Table Rows" width="500px">
+</details>
+
 ## Concept
 
 An **agent-agnostic HTTP Skill Server**. Any AI framework (LangChain, Vercel AI SDK, AutoGen, or a custom agent) can connect to it via standard HTTP and JSON Schema.
@@ -30,6 +40,29 @@ Server runs at `http://localhost:3000`.
 - **Formula exception at 5 months:** Babies on formula can start early if they pass all physical milestones, matching official pediatric guidance.
 - **Diet and allergen filtering:** The food dataset is filtered by dietary preference (standard / vegetarian / vegan) and any declared allergens before the plan is built.
 - **Printable 30-day checklist:** On approval, a `BLW_Fridge_Checklist.html` is generated automatically and served at `/api/checklist`.
+
+---
+
+## 🤖 Connecting Your Agent
+
+Any agent that can make HTTP calls needs only two endpoints to fully bootstrap:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/prompt` | Returns the orchestrator system prompt with today's date injected. Paste the returned `prompt` field directly as your agent's system prompt. |
+| `GET /api/tools` | Returns every tool's name, description, JSON Schema, and `endpoint` URL. Register each entry as a callable function in your agent framework. |
+
+The `endpoint` field in each tool definition tells your agent exactly where to POST — no manual wiring needed. The response is in OpenAI/Anthropic function-calling format, so most frameworks consume it directly.
+
+```
+# One-time setup for any agent (Hermes, LangChain, AutoGen, custom…)
+
+1. GET /api/prompt  →  use returned { prompt } as system prompt
+2. GET /api/tools   →  register each tool using its name, schema, and endpoint
+3. Start chatting   →  agent follows the prompt, calls tools, server responds
+```
+
+No SDK. No API key on the server. No configuration beyond pointing at `http://localhost:3000`.
 
 ---
 
