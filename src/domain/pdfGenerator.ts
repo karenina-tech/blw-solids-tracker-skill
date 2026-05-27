@@ -56,6 +56,5 @@ export function compileHtmlTemplate(babyName: string, startDate: string, items: 
 		.replace('{{TABLE_ROWS}}', tableRowsHtml)
 		.replace('{{TOOL_MESSAGES.ALLERGY_WARNING}}', TOOL_MESSAGES.ALLERGY_WARNING)
 		.replace('{{TOOL_MESSAGES.DISCLAIMER}}', TOOL_MESSAGES.DISCLAIMER)
-		.replace('{{TOOL_MESSAGES.MEDICAL_SOURCES}}', TOOL_MESSAGES.MEDICAL_SOURCES)
 		.replace('{{MONITORING_INSTRUCTIONS}}', TOOL_MESSAGES.MONITORING_INSTRUCTIONS);
 }

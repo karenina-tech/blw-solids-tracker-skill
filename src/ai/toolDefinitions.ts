@@ -106,7 +106,12 @@ export const getChokingHazardsSchema = {
     properties: {
       ageMonths: {
         type: "number",
-        description: "Baby's age in whole months, used to select the correct preparation method. Must be between 6 and 12 months (first-introduction range)."
+        description: "Baby's age in whole months. Must be 6–12, or 5 when feedingType is 'formula'."
+      },
+      feedingType: {
+        type: "string",
+        enum: ["formula", "exclusive_breastfeeding"],
+        description: "Required when ageMonths is 5. Must be 'formula' for the baby to be eligible."
       }
     },
     required: ["ageMonths"]

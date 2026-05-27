@@ -49,9 +49,12 @@ export function getSafeFoodsTool(input: ToolInput) {
   }
 
   // 3. Query dataset and filter by age, user allergies, and dietary pattern
+  // A 5-month formula baby passed the readiness gate above, so treat them as 6 months
+  // for food eligibility — all dataset foods require minAgeMonths: 6.
+  const effectiveAge = profile.ageMonths === 5 && profile.feedingType === 'formula' ? 6 : profile.ageMonths;
   const DIET_LEVEL: Record<string, number> = { standard: 0, vegetarian: 1, vegan: 2 };
   const safeFoods = FOOD_DATASET.filter(food => {
-    const satisfiesAge = profile.ageMonths >= food.minAgeMonths;
+    const satisfiesAge = effectiveAge >= food.minAgeMonths;
     const isUserAllergic = profile.allergicFoods.some(allergy =>
       food.id.toLowerCase() === allergy.toLowerCase() || food.name.toLowerCase() === allergy.toLowerCase()
     );

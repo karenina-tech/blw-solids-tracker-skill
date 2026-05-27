@@ -112,7 +112,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 	 * Choking Hazards Tool Endpoint: Returns a list of common choking hazards based on the baby's age and developmental milestones.
 	 */
 	fastify.post('/api/tools/get-choking-hazards', async (request, reply) => {
-		const { ageMonths } = request.body as { ageMonths: any };
+		const { ageMonths, feedingType } = request.body as { ageMonths: any; feedingType?: 'formula' | 'exclusive_breastfeeding' };
 
 		if (ageMonths === undefined) {
 			return reply.code(400).send({
@@ -122,7 +122,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 		}
 
 		try {
-			const result = getChokingHazardsTool({ ageMonths });
+			const result = getChokingHazardsTool({ ageMonths, feedingType });
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);

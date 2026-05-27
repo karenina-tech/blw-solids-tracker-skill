@@ -28,7 +28,5 @@ export const TOOL_MESSAGES = {
 		'Stop feeding immediately and contact emergency services if the infant exhibits any of the	following within 2 hours of exposure: Hives, Swelling of lips or tongue, Vomiting, Wheezing, or Limpness.',
 	DISCLAIMER:
 		'This checklist is an educational planning utility for family tracking only. It does not replace individualized clinical evaluation or feeding advice from an accredited pediatrician.',
-	MEDICAL_SOURCES:
-		'Evidence-based thresholds compiled from WHO Infant Feeding Frameworks and AAP Guidelines on solid food introduction.',
 	MONITORING_INSTRUCTIONS: ' Morning or midday only — monitor for 2 hours after exposure.'
 } as const;
