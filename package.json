@@ -8,7 +8,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "validate:dataset": "tsx src/scripts/validateDataset.ts",
-    "types": "tsc --noEmit && echo \"✨ Success: No type errors found!\""
+    "types": "tsc --noEmit && echo \"✨ Success: No type errors found!\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^24.12.4",
     "tsx": "^4.22.2",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.7"
   }
 }
