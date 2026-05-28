@@ -25,7 +25,7 @@ export const TOOL_MESSAGES = {
 		'The three physical markers (head control, sitting, and reach) are the most important safety signals, ' +
 		'and your baby has passed all of them.',
 	ALLERGY_WARNING:
-		'Stop feeding immediately and contact emergency services if the infant exhibits any of the	following within 2 hours of exposure: Hives, Swelling of lips or tongue, Vomiting, Wheezing, or Limpness.',
+		'Stop feeding immediately and contact emergency services if the infant exhibits any of the following within 2 hours of exposure: Hives, Swelling of lips or tongue, Vomiting, Wheezing, or Limpness.',
 	DISCLAIMER:
 		'This checklist is an educational planning utility for family tracking only. It does not replace individualized clinical evaluation or feeding advice from an accredited pediatrician.',
 	MONITORING_INSTRUCTIONS: ' Morning or midday only — monitor for 2 hours after exposure.'

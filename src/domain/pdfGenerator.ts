@@ -20,6 +20,11 @@ const MONTHS = [
 	'December'
 ];
 
+export function formatDate(isoDate: string): string {
+	const [y, m, d] = isoDate.split('-').map(Number);
+	return `${d} ${MONTHS[m - 1]} ${y}`;
+}
+
 function formatOrdinalDate(isoDate: string): string {
 	const [, m, d] = isoDate.split('-').map(Number);
 	const suffix =
@@ -52,7 +57,7 @@ export function compileHtmlTemplate(babyName: string, startDate: string, items: 
 
 	return template
 		.replace('{{BABY_NAME}}', babyName)
-		.replace('{{START_DATE}}', startDate)
+		.replace('{{START_DATE}}', formatDate(startDate))
 		.replace('{{TABLE_ROWS}}', tableRowsHtml)
 		.replace('{{TOOL_MESSAGES.ALLERGY_WARNING}}', TOOL_MESSAGES.ALLERGY_WARNING)
 		.replace('{{TOOL_MESSAGES.DISCLAIMER}}', TOOL_MESSAGES.DISCLAIMER)
