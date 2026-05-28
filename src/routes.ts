@@ -52,7 +52,8 @@ export async function appRoutes(fastify: FastifyInstance) {
 
 		if (!profile) {
 			return reply.code(400).send({
-				error: 'Bad Request',
+				success: false,
+				error: 'BAD_REQUEST',
 				message: 'Missing required field: profile within request body.'
 			});
 		}
@@ -79,7 +80,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);
-			return reply.code(400).send({ error: 'Validation Failed', message: error.message });
+			return reply.code(400).send({ success: false, error: 'VALIDATION_FAILED', message: error.message });
 		}
 	});
 
@@ -94,7 +95,8 @@ export async function appRoutes(fastify: FastifyInstance) {
 
 		if (ageMonths === undefined || !developmentalMilestones) {
 			return reply.code(400).send({
-				error: 'Bad Request',
+				success: false,
+				error: 'BAD_REQUEST',
 				message: 'Missing required fields: ageMonths, developmentalMilestones.'
 			});
 		}
@@ -104,7 +106,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);
-			return reply.code(400).send({ error: 'Validation Failed', message: error.message });
+			return reply.code(400).send({ success: false, error: 'VALIDATION_FAILED', message: error.message });
 		}
 	});
 
@@ -116,7 +118,8 @@ export async function appRoutes(fastify: FastifyInstance) {
 
 		if (ageMonths === undefined) {
 			return reply.code(400).send({
-				error: 'Bad Request',
+				success: false,
+				error: 'BAD_REQUEST',
 				message: 'Missing required field: ageMonths.'
 			});
 		}
@@ -126,7 +129,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 			return reply.code(200).send(result);
 		} catch (error: any) {
 			fastify.log.error(error);
-			return reply.code(400).send({ error: 'Validation Failed', message: error.message });
+			return reply.code(400).send({ success: false, error: 'VALIDATION_FAILED', message: error.message });
 		}
 	});
 
@@ -134,7 +137,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 	fastify.get('/api/checklist', async (_request, reply) => {
 		const filePath = path.join(process.cwd(), 'BLW_Fridge_Checklist.html');
 		if (!fs.existsSync(filePath)) {
-			return reply.code(404).send({ error: 'No checklist found. Run get-safe-foods first.' });
+			return reply.code(404).send({ success: false, error: 'NOT_FOUND', message: 'No checklist found. Run get-safe-foods first.' });
 		}
 		const metaPath = path.join(process.cwd(), 'BLW_Checklist_Meta.json');
 		const nameSlug = fs.existsSync(metaPath)
@@ -149,7 +152,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 	fastify.get('/api/prompt', async (_request, reply) => {
 		const promptPath = path.join(process.cwd(), 'prompts', 'blw-orchestrator.md');
 		if (!fs.existsSync(promptPath)) {
-			return reply.code(404).send({ error: 'Prompt file not found.' });
+			return reply.code(404).send({ success: false, error: 'NOT_FOUND', message: 'Prompt file not found.' });
 		}
 		const today = new Date().toISOString().split('T')[0];
 		const prompt = fs.readFileSync(promptPath, 'utf-8').replace('{{TODAY}}', today);
