@@ -25,7 +25,7 @@ export const FOOD_DATASET: FoodItem[] = [
 	},
 	{
 		id: 'amaranth',
-		name: 'Amaranth / Amaranto',
+		name: 'Amaranth',
 		category: 'Standard',
 		minAgeMonths: 6,
 		preparationByAge: {
@@ -305,7 +305,7 @@ export const FOOD_DATASET: FoodItem[] = [
 	},
 	{
 		id: 'corn',
-		name: 'Corn / Elote',
+		name: 'Corn',
 		category: 'Standard',
 		minAgeMonths: 6,
 		preparationByAge: {

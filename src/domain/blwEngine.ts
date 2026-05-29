@@ -54,67 +54,83 @@ function shuffle<T>(arr: T[]): T[] {
 	return result;
 }
 
+const MEAT_START_DAY = 14;
+
+function isMeat(food: FoodItem) {
+	return food.category === 'Standard' && food.dietaryType === 'standard';
+}
+
+function buildLaterPool(nonMeats: FoodItem[], meats: FoodItem[]): FoodItem[] {
+	if (meats.length === 0) return nonMeats;
+	const pool: FoodItem[] = [];
+	let ni = 0;
+	let mi = 0;
+	while (ni < nonMeats.length || mi < meats.length) {
+		for (let r = 0; r < 2 && ni < nonMeats.length; r++) pool.push(nonMeats[ni++]);
+		if (mi < meats.length) pool.push(meats[mi++]);
+	}
+	return pool;
+}
+
 export function generate30DayPlan(foods: FoodItem[], startDate: string, ageMonths: number): ChecklistItem[] {
-	// Shuffle allergens so they appear in a different order each time.
 	const allergens = shuffle(foods.filter((food) => food.category === 'Allergen'));
 
-	// Mild foods (no choking hazard) still go first for the warm-up days, but
-	// both groups are shuffled so the order varies across checklist generations.
-	const mildStandards = shuffle(foods.filter((food) => food.category === 'Standard' && !food.chokingHazardWarning));
-	const otherStandards = shuffle(foods.filter((food) => food.category === 'Standard' && !!food.chokingHazardWarning));
-	const orderedStandards = [...mildStandards, ...otherStandards];
+	const nonMeatMild = shuffle(
+		foods.filter((f) => f.category === 'Standard' && !isMeat(f) && !f.chokingHazardWarning)
+	);
+	const nonMeatOther = shuffle(
+		foods.filter((f) => f.category === 'Standard' && !isMeat(f) && !!f.chokingHazardWarning)
+	);
+	const nonMeatPool = [...nonMeatMild, ...nonMeatOther];
+	const meatPool = shuffle(foods.filter(isMeat));
 
-	// If there are no standard foods at all, cycle through everything so the plan
-	// always reaches exactly 30 days.
-	const cyclingPool = orderedStandards.length > 0 ? orderedStandards : foods;
-	let cycleIndex = 0;
+	const prePool = nonMeatPool.length > 0 ? nonMeatPool : foods;
+	const laterPool = buildLaterPool(nonMeatPool, meatPool);
+	const safeLaterPool = laterPool.length > 0 ? laterPool : prePool;
 
-	function nextStandardFood(): FoodItem {
-		const food = cyclingPool[cycleIndex % cyclingPool.length];
-		cycleIndex++;
-		return food;
-	}
+	let preIdx = 0;
+	let laterIdx = 0;
 
 	const schedule: ScheduledDay[] = [];
 
-	// Step 1 — warm-up: 2 days of mild standard food before any allergen is introduced.
+	function nextStandardFood(): FoodItem {
+		if (schedule.length < MEAT_START_DAY || meatPool.length === 0) {
+			const food = prePool[preIdx % prePool.length];
+			preIdx++;
+			return food;
+		}
+		const food = safeLaterPool[laterIdx % safeLaterPool.length];
+		laterIdx++;
+		return food;
+	}
+
 	for (let i = 0; i < 2 && schedule.length < 30; i++) {
 		schedule.push({ food: nextStandardFood() });
 	}
 
-	// Step 2 — allergen trials: 3 consecutive days per allergen + 3 buffer days after.
 	for (const allergen of allergens) {
 		if (schedule.length >= 30) break;
-
 		schedule.push({ food: allergen, allergenTrialDay: 1 });
 		if (schedule.length < 30) schedule.push({ food: allergen, allergenTrialDay: 2 });
 		if (schedule.length < 30) schedule.push({ food: allergen, allergenTrialDay: 3 });
-
-		// Buffer days let parents watch for delayed reactions before the next allergen during the next three days.
 		for (let i = 0; i < 3 && schedule.length < 30; i++) {
 			schedule.push({ food: nextStandardFood() });
 		}
 	}
 
-	// Step 3 — fill: cycle standard foods until the plan is exactly 30 days.
 	while (schedule.length < 30) {
 		schedule.push({ food: nextStandardFood() });
 	}
 
-	// Convert the raw schedule into ChecklistItem[] with dates and preparation details.
 	return schedule.map((day, index): ChecklistItem => {
 		const preparation = getPreparationForAge(day.food.preparationByAge, ageMonths);
-
 		let category: ChecklistItem['category'];
 		if (day.allergenTrialDay) {
 			category = getAllergenDayLabel(day.allergenTrialDay);
 		} else {
 			category = 'Standard';
 		}
-
-		// ⏰ marks allergen days as morning/midday-only with a 2-hour monitoring window.
 		const prefix = day.allergenTrialDay ? '⏰ ' : '';
-
 		return {
 			date: shiftDateByDays(startDate, index),
 			foodItem: `${prefix}${day.food.name} — ${preparation}`,

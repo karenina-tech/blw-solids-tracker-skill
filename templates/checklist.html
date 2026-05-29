@@ -317,6 +317,23 @@
 				background: var(--rose-bg);
 				color: var(--rose-text);
 				border: 1px solid var(--rose-border);
+				@media screen and (max-width: 640px) {
+					.badge {
+						width: 11px;
+						height: 11px;
+						padding: 0;
+						border-radius: 50%;
+						font-size: 0;
+						border: none;
+						vertical-align: middle;
+					}
+					.badge-standard {
+						background: var(--green-text);
+					}
+					.badge-allergen {
+						background: var(--rose-text);
+					}
+				}
 			}
 
 			/* ── Footer ─────────────────────────────────────────────────── */
@@ -325,7 +342,13 @@
 				margin-top: 4px;
 			}
 
-			.alert-box { background: var(--danger-bg); border-left: 3px solid #ef4444; border-radius: 0 6px 6px 0; padding: 10px 13px; margin-bottom: 12px; }
+			.alert-box {
+				background: var(--danger-bg);
+				border-left: 3px solid #ef4444;
+				border-radius: 0 6px 6px 0;
+				padding: 10px 13px;
+				margin-bottom: 12px;
+			}
 
 			.alert-box .alert-title {
 				font-size: 8.5pt;
@@ -479,7 +502,7 @@
 				</div>
 			</div>
 
-			<div class="signature">Built by karenina-tech &bull; Programmatic BLW Tool</div>
+			<div class="signature">Made with 💚 by Karenina &bull; Programmatic BLW Tool</div>
 		</div>
 	</body>
 </html>
