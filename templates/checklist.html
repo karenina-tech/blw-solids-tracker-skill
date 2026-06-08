@@ -3,7 +3,6 @@
 	<head>
 		<meta charset="UTF-8" />
 		<style>
-			/* ── Page & Base ────────────────────────────────────────────── */
 			@page {
 				size: A4;
 				margin: 15mm 12mm;
@@ -15,7 +14,6 @@
 				margin: 0;
 				padding: 0;
 			}
-
 			:root {
 				--warning-50: #fef9e7;
 				--slate-50: #f8fafc;
@@ -28,24 +26,19 @@
 				--slate-700: #334155;
 				--slate-800: #1e293b;
 				--slate-900: #0f172a;
-
 				--accent: #6366f1;
 				--accent-light: #eef2ff;
 				--accent-border: #c7d2fe;
-
 				--green-bg: #f0fdf4;
 				--green-text: #166534;
 				--green-border: #bbf7d0;
-
 				--rose-bg: #fff1f2;
 				--rose-text: #9f1239;
 				--rose-border: #fecdd3;
-
 				--danger-bg: #fef2f2;
 				--danger-border: #fca5a5;
 				--danger-text: #991b1b;
 			}
-
 			body {
 				font-family:
 					'Inter',
@@ -58,8 +51,6 @@
 				color: var(--slate-800);
 				background: var(--slate-100);
 			}
-
-			/* ── Screen wrapper: centers content as a document page ─────── */
 			.page-wrapper {
 				max-width: 800px;
 				margin: 28px auto;
@@ -69,7 +60,6 @@
 				border-radius: 12px;
 				box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
 			}
-
 			@media print {
 				body {
 					background: #ffffff;
@@ -99,8 +89,6 @@
 					border: none;
 				}
 			}
-
-			/* ── Header ─────────────────────────────────────────────────── */
 			.header-banner {
 				display: flex;
 				align-items: flex-start;
@@ -110,13 +98,11 @@
 				margin-bottom: 18px;
 				gap: 12px;
 			}
-
 			.header-left {
 				display: flex;
 				align-items: center;
 				gap: 14px;
 			}
-
 			.header-icon {
 				width: 42px;
 				height: 42px;
@@ -129,7 +115,6 @@
 				font-size: 20px;
 				flex-shrink: 0;
 			}
-
 			.header-title {
 				font-size: 17pt;
 				font-weight: 700;
@@ -137,14 +122,12 @@
 				letter-spacing: -0.3px;
 				line-height: 1.2;
 			}
-
 			.header-sub {
 				font-size: 8.5pt;
 				color: var(--slate-500);
 				margin-top: 3px;
 				font-weight: 400;
 			}
-
 			.header-badge {
 				display: inline-flex;
 				align-items: center;
@@ -161,8 +144,6 @@
 				flex-shrink: 0;
 				margin-top: 2px;
 			}
-
-			/* ── Legend ─────────────────────────────────────────────────── */
 			.legend-box {
 				background: var(--warning-50);
 				border: 1px solid var(--slate-200);
@@ -175,22 +156,10 @@
 				align-items: center;
 				gap: 8px;
 			}
-
 			.legend-box strong {
 				color: var(--slate-700);
 				font-weight: 600;
 			}
-
-			.legend-dot {
-				width: 4px;
-				height: 4px;
-				background: var(--slate-300);
-				border-radius: 50%;
-				display: inline-block;
-				flex-shrink: 0;
-			}
-
-			/* ── Table ──────────────────────────────────────────────────── */
 			table {
 				width: 100%;
 				table-layout: fixed;
@@ -201,16 +170,13 @@
 				border-radius: 8px;
 				overflow: hidden;
 			}
-
 			tr {
 				page-break-inside: avoid;
 				break-inside: avoid;
 			}
-
 			thead tr {
 				background: var(--slate-100);
 			}
-
 			th {
 				padding: 8px 10px;
 				font-size: 7.5pt;
@@ -221,14 +187,12 @@
 				border-bottom: 1px solid var(--slate-200);
 				text-align: left;
 			}
-
 			thead th.col-cat,
 			thead th.col-chk {
 				text-align: center;
 				padding-left: 0;
 				padding-right: 0;
 			}
-
 			td {
 				padding: 9px 10px;
 				font-size: 8.5pt;
@@ -236,11 +200,9 @@
 				border-bottom: 1px solid var(--slate-100);
 				vertical-align: middle;
 			}
-
 			tbody tr:last-child td {
 				border-bottom: none;
 			}
-
 			.col-date {
 				width: 8%;
 				font-variant-numeric: tabular-nums;
@@ -279,8 +241,6 @@
 			.col-notes {
 				width: 28%;
 			}
-
-			/* Vertical dividers between Category → Offered → Notes */
 			th.col-cat,
 			th.col-chk,
 			th.col-notes,
@@ -289,14 +249,6 @@
 			td.col-notes {
 				border-left: 1px solid var(--slate-300);
 			}
-
-			.line-spacer {
-				border-bottom: 1px dashed var(--slate-200);
-				display: block;
-				height: 16px;
-			}
-
-			/* ── Badges ─────────────────────────────────────────────────── */
 			.badge {
 				display: inline-block;
 				padding: 2px 7px;
@@ -306,42 +258,45 @@
 				letter-spacing: 0.2px;
 				white-space: nowrap;
 			}
-
 			.badge-standard {
 				background: var(--green-bg);
 				color: var(--green-text);
 				border: 1px solid var(--green-border);
 			}
-
 			.badge-allergen {
 				background: var(--rose-bg);
 				color: var(--rose-text);
 				border: 1px solid var(--rose-border);
-				@media screen and (max-width: 640px) {
-					.badge {
-						width: 11px;
-						height: 11px;
-						padding: 0;
-						border-radius: 50%;
-						font-size: 0;
-						border: none;
-						vertical-align: middle;
-					}
-					.badge-standard {
-						background: var(--green-text);
-					}
-					.badge-allergen {
-						background: var(--rose-text);
-					}
+			}
+			@media screen and (max-width: 640px) {
+				.badge {
+					width: 11px;
+					height: 11px;
+					padding: 0;
+					border-radius: 50%;
+					font-size: 0;
+					border: none;
+					vertical-align: middle;
+				}
+				.badge-standard {
+					background: var(--green-border);
+				}
+				.badge-allergen {
+					background: var(--rose-border);
+				}
+				th {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+				.col-cat {
+					width: 8%;
 				}
 			}
-
-			/* ── Footer ─────────────────────────────────────────────────── */
 			.footer-section {
 				page-break-inside: avoid;
 				margin-top: 4px;
 			}
-
 			.alert-box {
 				background: var(--danger-bg);
 				border-left: 3px solid #ef4444;
@@ -349,20 +304,17 @@
 				padding: 10px 13px;
 				margin-bottom: 12px;
 			}
-
 			.alert-box .alert-title {
 				font-size: 8.5pt;
 				font-weight: 700;
 				color: var(--danger-text);
 				margin-bottom: 4px;
 			}
-
 			.alert-box p {
 				font-size: 8pt;
 				color: #b91c1c;
 				line-height: 1.5;
 			}
-
 			.info-grid {
 				display: table;
 				width: 100%;
@@ -391,8 +343,6 @@
 				padding-left: 14px;
 				border-left: 1px solid var(--slate-200);
 			}
-
-			/* ── Bibliography ───────────────────────────────────────────── */
 			.bibliography {
 				margin-top: 10px;
 				padding-top: 8px;
@@ -419,8 +369,6 @@
 			.bibliography em {
 				font-style: italic;
 			}
-
-			/* ── Signature ──────────────────────────────────────────────── */
 			.signature {
 				text-align: center;
 				font-size: 7.5pt;
@@ -446,11 +394,7 @@
 				</div>
 				<div class="header-badge">✦ BLW Tracker</div>
 			</div>
-
-			<div class="legend-box">
-				<span>⏰ {{MONITORING_INSTRUCTIONS}}</span>
-			</div>
-
+			<div class="legend-box"><span>⏰ {{MONITORING_INSTRUCTIONS}}</span></div>
 			<table>
 				<thead>
 					<tr>
@@ -465,7 +409,6 @@
 					{{TABLE_ROWS}}
 				</tbody>
 			</table>
-
 			<div class="footer-section">
 				<div class="alert-box">
 					<div class="alert-title">🚨 Allergy Reaction Quick Reference</div>
@@ -501,7 +444,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="signature">Made with 💚 by Karenina &bull; Programmatic BLW Tool</div>
 		</div>
 	</body>
