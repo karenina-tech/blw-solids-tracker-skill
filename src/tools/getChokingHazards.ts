@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { FOOD_DATASET } from '../data/foodDataset.js';
+import { TOOL_MESSAGES } from '../data/toolMessages.js';
 
 const GetChokingHazardsInputSchema = z.object({
   ageMonths: z.number().min(0).max(12),
@@ -8,16 +9,23 @@ const GetChokingHazardsInputSchema = z.object({
 
 type GetChokingHazardsInput = z.infer<typeof GetChokingHazardsInputSchema>;
 
-function getPreparationForAge(preparationByAge: Record<string, string>, ageMonths: number): string | null {
-  for (const [range, instruction] of Object.entries(preparationByAge)) {
-    const [minStr, maxStr] = range.split('-');
-    const min = parseInt(minStr, 10);
-    const max = maxStr ? parseInt(maxStr, 10) : Infinity;
-    if (ageMonths >= min && ageMonths < max) return instruction;
-  }
-  // Baby is older than dataset covers — return last available range
+export type PreparationRule = {
+  id: string;
+  name: string;
+  chokingHazardWarning: string;
+  safePreparation: string;
+};
+
+function getPreparationForAge(preparationByAge: Record<string, string>, ageMonths: number): string {
   const entries = Object.entries(preparationByAge);
-  return entries.length > 0 ? entries[entries.length - 1][1] : null;
+  for (const [range, instruction] of entries) {
+    const [minAge, maxAge] = range.split('-').map(Number);
+    if (ageMonths >= minAge && ageMonths < maxAge) {
+      return instruction;
+    }
+  }
+  const allInstructions = Object.values(preparationByAge);
+  return allInstructions[allInstructions.length - 1] ?? '';
 }
 
 export function getChokingHazardsTool(input: GetChokingHazardsInput) {
@@ -29,8 +37,6 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
 
   const { ageMonths, feedingType } = validation.data;
 
-  // Re-derive age eligibility — mirrors the same rule in checkBLWReadiness.
-  // Enforces that this tool is only reachable after an approved get-safe-foods call.
   if (ageMonths === 5 && feedingType === undefined) {
     return {
       success: false,
@@ -40,11 +46,15 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
   }
 
   const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
+
   if (!ageOk) {
+    const isBreastfeedingBlock = ageMonths === 5 && feedingType === 'exclusive_breastfeeding';
     return {
       success: false,
       safetyStatus: 'BLOCKED_NOT_READY',
-      message: 'Baby does not meet the minimum age requirement for BLW preparation guidance.'
+      note: isBreastfeedingBlock
+        ? TOOL_MESSAGES.EXCLUSIVE_BREASTFEEDING_NOTE
+        : TOOL_MESSAGES.AGE_TOO_YOUNG_NOTE
     };
   }
 
@@ -52,16 +62,18 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
   // consistent with the effectiveAge pattern in getSafeFoods.
   const effectiveAge = ageMonths === 5 && feedingType === 'formula' ? 6 : ageMonths;
 
-  const preparationRules = FOOD_DATASET.map(food => ({
-    id: food.id,
-    name: food.name,
-    preparation: getPreparationForAge(food.preparationByAge, effectiveAge),
-    chokingHazardWarning: food.chokingHazardWarning ?? null,
-  }));
+  const preparationRules: PreparationRule[] = FOOD_DATASET.filter((food) => !!food.chokingHazardWarning).map(
+    (food) => ({
+      id: food.id,
+      name: food.name,
+      chokingHazardWarning: food.chokingHazardWarning!,
+      safePreparation: getPreparationForAge(food.preparationByAge, effectiveAge)
+    })
+  );
 
   return {
     success: true,
-    ageMonths,
-    preparationRules,
+    safetyStatus: 'APPROVED',
+    preparationRules
   };
 }

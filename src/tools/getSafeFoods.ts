@@ -23,6 +23,14 @@ export function getSafeFoodsTool(input: ToolInput) {
   // 2. Enforce strict safety milestone gate
   const readiness = checkBLWReadiness(profile.ageMonths, profile.developmentalMilestones, profile.feedingType);
   if (!readiness.isReady) {
+    if (profile.ageMonths === 5 && profile.feedingType === 'exclusive_breastfeeding') {
+      return {
+        success: false,
+        safetyStatus: 'BLOCKED_NOT_READY',
+        note: TOOL_MESSAGES.EXCLUSIVE_BREASTFEEDING_NOTE
+      };
+    }
+
     const missing: string[] = [];
     if (!profile.developmentalMilestones.headControl)              missing.push("hasn't developed full head control yet");
     if (!profile.developmentalMilestones.canSitWithMinimalSupport) missing.push("isn't sitting upright with minimal support yet");
