@@ -22,7 +22,7 @@ This tool helps parents track the introduction of solid foods in a safe, suggest
 
 If you just want to generate a BLW checklist for your baby — no setup, no AI subscription, no server — use the companion web app instead:
 
-**[blw-solids-tracker-web](https://github.com/karenina-tech/blw-solids-tracker-web)** — open the link, fill in a short form, and download your personalised 30-day checklist. Free, open source, runs entirely in the browser.
+**[🥑 BLW Solids Tracker](https://blw.kareninatech.com)** — open the link, fill in a short form, and download your personalised 30-day checklist. Free, open source, runs entirely in the browser.
 
 ---
 
