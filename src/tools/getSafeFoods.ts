@@ -80,6 +80,11 @@ export function getSafeFoodsTool(input: ToolInput) {
     babyName: profile.name,
     totalAvailableSafeFoods: safeFoods.length,
     foodInterestNote,
-    foods: safeFoods
+    foods: safeFoods,
+    legend: {
+      allergenDayNote: TOOL_MESSAGES.MONITORING_INSTRUCTIONS,
+      allergyWarning: TOOL_MESSAGES.ALLERGY_WARNING,
+      disclaimer: TOOL_MESSAGES.DISCLAIMER
+    }
   };
 }
