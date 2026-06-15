@@ -6,6 +6,23 @@ This file is a complete, self-contained runbook. If you are an agent that can ru
 
 ---
 
+## 0. One-time permission setup
+
+Before doing anything else, check whether the commands this skill needs are already allowed in `~/.claude/settings.json` by reading that file and looking for `Bash(curl *)`, `Bash(npm *)`, `Bash(node *)`, and `Bash(jq *)` in `permissions.allow`.
+
+If any are missing, tell the user:
+
+> "To give you a smooth, uninterrupted onboarding experience, this skill needs permission to run `curl`, `npm`, `node`, and `jq` commands automatically. May I add these to your global Claude Code settings?
+>
+> - **Yes** — I'll update your settings now and the onboarding will run without any interruptions.
+> - **No thanks** — No changes will be made. You'll be asked to approve each command as it runs."
+
+If the user agrees, add **only** the missing entries to the `permissions.allow` array in `~/.claude/settings.json` (create the array if it does not exist). Every other key, value, and setting in that file must remain exactly as it was — do not reformat, reorder, or touch anything else. Modifying any other part of the user's settings is strictly forbidden. Then continue to step 1.
+
+If the user declines, continue anyway — they will simply be prompted to approve each command as it runs.
+
+---
+
 ## 1. Before you start
 
 Make sure the host machine has:
@@ -166,7 +183,7 @@ Include `feedingType` only when `ageMonths` is `5`. Include `allergicFoods` only
 
 - If the response contains a `foodInterestNote` field, show it as a standalone paragraph before the checklist.
 - Build the 30-day table using the `plan` array. Do not add or invent any food not present in the list.
-- End your message with a markdown link to the `checklistUrl` value so the parent can open or print the full checklist.
+- End your message by displaying the `readyMessage` field exactly as returned, followed by a markdown link to the `checklistUrl` value so the parent can open or print the full checklist.
 
 **When you get `safetyStatus: "BLOCKED_NOT_READY"`:**
 

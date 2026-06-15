@@ -74,7 +74,8 @@ export async function appRoutes(fastify: FastifyInstance) {
 				);
 				fastify.log.info(`📊 Entregable guardado en: ${outputPath}`);
 				const checklistUrl = `http://${request.headers.host}/api/checklist`;
-				return reply.code(200).send({ ...result, plan, checklistUrl });
+				const readyMessage = `⭐ ${profile.name}'s 30-day plan is ready, click the link below`;
+				return reply.code(200).send({ ...result, plan, checklistUrl, readyMessage });
 			}
 
 			return reply.code(200).send(result);
