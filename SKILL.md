@@ -1,12 +1,14 @@
 # Skill: BLW Solids Tracker
 
-This document tells you — the agent — how to start this skill server and connect to it. Follow each step in order.
+This file is a complete, self-contained runbook. If you are an agent that can run shell commands and make HTTP requests, follow every step in order and you will have the skill running end to end — the user does not need to do anything else.
+
+**Required capabilities:** shell access (to clone and run the server) and HTTP (to call the tools). If you cannot run shell commands, you cannot host the server yourself — see the **Connect your agent** section of the [README](./README.md) for HTTP-only and SDK integrations instead.
 
 ---
 
-## 1. Prerequisites
+## 1. Before you start
 
-Before you run anything, make sure the host machine has:
+Make sure the host machine has:
 
 - **Node.js** v18 or higher (`node -v` to check)
 - **npm** v9 or higher (`npm -v` to check)
@@ -14,7 +16,20 @@ Before you run anything, make sure the host machine has:
 
 ---
 
-## 3. Server Initialization
+## 2. Get the code
+
+If you don't already have the project locally, clone it first:
+
+```bash
+git clone https://github.com/karenina-tech/blw-solids-tracker-skill.git
+cd blw-solids-tracker-skill
+```
+
+If the user already opened this repo for you, skip to step 3.
+
+---
+
+## 3. Start the server
 
 Run these commands in the project root to start the server:
 
@@ -35,7 +50,7 @@ Once you see `🥑 BLW Solids Tracker running at http://localhost:<port>`, the s
 
 ---
 
-## 4. Agent Integration
+## 4. Connect and run the flow
 
 ### Bootstrap — do this once before anything else
 
@@ -57,15 +72,17 @@ This returns every tool available in this skill — name, description, the full 
 
 ---
 
-### Starting the flow
+### Start onboarding immediately
 
-When the user triggers the `blw-tracker` command, call:
+As soon as you've loaded the prompt and registered the tools, begin the flow yourself — **do not wait for any command, keyword, or trigger from the user.** Running this skill *is* the activation. The end user does not have to type anything to start.
+
+Call:
 
 ```
 POST /api/commands/blw-tracker
 ```
 
-You will receive the first message to send the user and the instruction to begin the onboarding questionnaire. Collect the full baby profile through conversation **before** calling any tool.
+This returns your opening greeting and the first onboarding question. Send the greeting, then walk the parent through the onboarding questionnaire defined in your system prompt, asking **one question at a time** and collecting the full baby profile **before** calling any tool.
 
 ---
 
@@ -210,3 +227,9 @@ When a request fails, you will always receive:
 ```
 
 Check `success: false` to detect errors uniformly across all tools.
+
+---
+
+## 5. When you're done
+
+After `getSafeFoods` returns `APPROVED`, you have completed the skill. Show the parent the 30-day plan and end with a link to the `checklistUrl`. If any safety gate blocked, show the `note` field word for word and stop. Either way, report the outcome to the user — they pasted this file expecting you to run the whole flow.

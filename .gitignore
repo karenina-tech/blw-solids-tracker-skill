@@ -40,5 +40,6 @@ BLW_Checklist_Meta.json
 test-agent.html
 test-mock.html
 
-# Local Claude context
-.claude/
+# Local Claude context (personal overrides and memory — not committed)
+.claude/settings.local.json
+.claude/ARCHITECTURE.md
