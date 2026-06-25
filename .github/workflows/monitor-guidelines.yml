@@ -1,0 +1,31 @@
+name: Monitor Medical Guidelines
+
+on:
+  schedule:
+    # 09:00 UTC on the 1st of every other month (Jan, Mar, May, Jul, Sep, Nov)
+    - cron: '0 9 1 1,3,5,7,9,11 *'
+  workflow_dispatch: # allows manual trigger from the Actions tab
+
+jobs:
+  monitor:
+    name: Check guideline sources for updates
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write   # required to open GitHub Issues on change detection
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run guidelines monitor
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node monitoring/monitor-guidelines.cjs

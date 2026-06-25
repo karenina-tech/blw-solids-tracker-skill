@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "lastReviewed": "2024-01-01",
+    "reviewedBy": "initial — verify against sources before deploying",
+    "sources": [
+      {
+        "id": "who-2023-complementary-feeding",
+        "citation": "World Health Organization. (2023). Guideline for complementary feeding of infants and young children 6–23 months of age. WHO Press, Geneva."
+      },
+      {
+        "id": "aap-2022-complementary-foods-pubmed",
+        "citation": "American Academy of Pediatrics, Eidelman A.I. et al. (2022). Timing of Introduction of Complementary Foods to Breastfed and Formula-Fed Infants. Pediatrics."
+      },
+      {
+        "id": "aap-2024-healthychildren-solids",
+        "citation": "American Academy of Pediatrics. (2024). Infant Food and Feeding. HealthyChildren.org — AAP Policy Statement."
+      }
+    ]
+  },
+  "ageRules": {
+    "standardMinimumMonths": 6,
+    "absoluteMinimumMonths": 4,
+    "earlyWindowMonths": [5],
+    "earlyWindowApprovedFeedingTypes": ["formula"],
+    "earlyWindowEffectiveAgeMonths": 6
+  },
+  "developmentalMilestones": {
+    "required": ["headControl", "canSitWithMinimalSupport", "reachAndGrab"],
+    "informational": ["showsInterestInFood"]
+  }
+}

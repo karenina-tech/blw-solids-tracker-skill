@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { FOOD_DATASET } from '../data/foodDataset.js';
 import { TOOL_MESSAGES } from '../data/toolMessages.js';
+import { getGuidelines } from '../config/guidelines.js';
 
 const GetChokingHazardsInputSchema = z.object({
   ageMonths: z.number().min(0).max(12),
@@ -36,8 +37,10 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
   }
 
   const { ageMonths, feedingType } = validation.data;
+  const g = getGuidelines();
+  const isEarlyWindow = g.ageRules.earlyWindowMonths.includes(ageMonths);
 
-  if (ageMonths === 5 && feedingType === undefined) {
+  if (isEarlyWindow && feedingType === undefined) {
     return {
       success: false,
       safetyStatus: 'REQUIRES_FEEDING_TYPE',
@@ -45,10 +48,12 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
     };
   }
 
-  const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
+  const ageOk =
+    ageMonths >= g.ageRules.standardMinimumMonths ||
+    (isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(feedingType!));
 
   if (!ageOk) {
-    const isBreastfeedingBlock = ageMonths === 5 && feedingType === 'exclusive_breastfeeding';
+    const isBreastfeedingBlock = isEarlyWindow && feedingType === 'exclusive_breastfeeding';
     return {
       success: false,
       safetyStatus: 'BLOCKED_NOT_READY',
@@ -58,9 +63,13 @@ export function getChokingHazardsTool(input: GetChokingHazardsInput) {
     };
   }
 
-  // 5-month formula babies are approved — use 6 for preparation rule lookup,
-  // consistent with the effectiveAge pattern in getSafeFoods.
-  const effectiveAge = ageMonths === 5 && feedingType === 'formula' ? 6 : ageMonths;
+  // A 5-month formula-fed baby who passed the readiness check uses age 6
+  // for food preparation rules — same logic as in getSafeFoods.
+  const isEarlyWindowApproved =
+    isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(feedingType!);
+  const effectiveAge = isEarlyWindowApproved
+    ? g.ageRules.earlyWindowEffectiveAgeMonths
+    : ageMonths;
 
   const preparationRules: PreparationRule[] = FOOD_DATASET.filter((food) => !!food.chokingHazardWarning).map(
     (food) => ({

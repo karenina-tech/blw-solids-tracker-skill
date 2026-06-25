@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { MilestoneSchema } from '../schemas/profileSchema.js';
 import { TOOL_MESSAGES } from '../data/toolMessages.js';
+import { getGuidelines } from '../config/guidelines.js';
 
 const ValidateAgeInputSchema = z.object({
 	ageMonths: z.number().min(0).max(12),
@@ -15,25 +16,26 @@ export function checkBLWReadiness(
 	milestones: z.infer<typeof MilestoneSchema>,
 	feedingType?: 'formula' | 'exclusive_breastfeeding'
 ) {
-	// 5-month-olds: feeding type must be known before a verdict can be reached.
-	if (ageMonths === 5 && feedingType === undefined) {
+	const g = getGuidelines();
+	const isEarlyWindow = g.ageRules.earlyWindowMonths.includes(ageMonths);
+
+	if (isEarlyWindow && feedingType === undefined) {
 		return { isReady: false, ageOk: false, milestonesOk: false, requiresFeedingType: true };
 	}
 
-	// 5 months + formula is treated as age-eligible; exclusive breastfeeding is not.
-	const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
+	const ageOk =
+		ageMonths >= g.ageRules.standardMinimumMonths ||
+		(isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(feedingType!));
 
-	// showsInterestInFood is informational only — not a hard safety gate.
-	const milestonesOk =
-		milestones.headControl &&
-		milestones.canSitWithMinimalSupport &&
-		milestones.reachAndGrab;
+	const milestonesOk = g.developmentalMilestones.required.every(
+		(key) => milestones[key] === true
+	);
 
 	return { isReady: ageOk && milestonesOk, ageOk, milestonesOk, requiresFeedingType: false };
 }
 
-// validateAgeTool evaluates age and feeding type only.
-// Milestone evaluation is the exclusive responsibility of getSafeFoods.
+// validateAgeTool checks age and feeding type only.
+// Checking milestones is done separately in getSafeFoods.
 export function validateAgeTool(input: ValidateAgeInput) {
 	const validation = ValidateAgeInputSchema.safeParse(input);
 	if (!validation.success) {
@@ -41,8 +43,10 @@ export function validateAgeTool(input: ValidateAgeInput) {
 	}
 
 	const { ageMonths, feedingType } = validation.data;
+	const g = getGuidelines();
+	const isEarlyWindow = g.ageRules.earlyWindowMonths.includes(ageMonths);
 
-	if (ageMonths === 5 && feedingType === undefined) {
+	if (isEarlyWindow && feedingType === undefined) {
 		return {
 			success: false,
 			safetyStatus: 'REQUIRES_FEEDING_TYPE',
@@ -50,10 +54,12 @@ export function validateAgeTool(input: ValidateAgeInput) {
 		};
 	}
 
-	const ageOk = ageMonths >= 6 || (ageMonths === 5 && feedingType === 'formula');
+	const ageOk =
+		ageMonths >= g.ageRules.standardMinimumMonths ||
+		(isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(feedingType!));
 
 	if (!ageOk) {
-		const isBreastfeedingBlock = ageMonths === 5 && feedingType === 'exclusive_breastfeeding';
+		const isBreastfeedingBlock = isEarlyWindow && feedingType === 'exclusive_breastfeeding';
 		return {
 			success: false,
 			safetyStatus: 'BLOCKED_NOT_READY',
@@ -64,11 +70,11 @@ export function validateAgeTool(input: ValidateAgeInput) {
 		};
 	}
 
-	const isEarlyFormula = ageMonths === 5 && feedingType === 'formula';
+	const isEarlyWindowApproved = isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(feedingType!);
 	return {
 		success: true,
 		safetyStatus: 'APPROVED',
 		ageOk: true,
-		note: isEarlyFormula ? TOOL_MESSAGES.FORMULA_5M_DISCLAIMER : undefined
+		note: isEarlyWindowApproved ? TOOL_MESSAGES.FORMULA_5M_DISCLAIMER : undefined
 	};
 }

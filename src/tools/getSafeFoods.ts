@@ -2,13 +2,21 @@ import { FOOD_DATASET } from '../data/foodDataset.js';
 import { TOOL_MESSAGES } from '../data/toolMessages.js';
 import { BabyProfileSchema, type BabyProfile } from '../schemas/profileSchema.js';
 import { checkBLWReadiness } from './validateAge.js';
+import { getGuidelines, type MilestoneKey } from '../config/guidelines.js';
 
 interface ToolInput {
   profile: BabyProfile;
 }
 
+const MILESTONE_MESSAGES: Record<MilestoneKey, string> = {
+	headControl: "hasn't developed full head control yet",
+	canSitWithMinimalSupport: "isn't sitting upright with minimal support yet",
+	reachAndGrab: "hasn't started reaching and grabbing yet",
+	showsInterestInFood: "hasn't shown obvious interest in food yet",
+};
+
 export function getSafeFoodsTool(input: ToolInput) {
-  // 1. Validate incoming data structure from Claude deterministically via Zod
+  // 1. Check that the data sent by the agent has the correct format.
   const validation = BabyProfileSchema.safeParse(input.profile);
   if (!validation.success) {
     return {
@@ -19,11 +27,13 @@ export function getSafeFoodsTool(input: ToolInput) {
   }
 
   const profile = validation.data;
+  const g = getGuidelines();
+  const isEarlyWindow = g.ageRules.earlyWindowMonths.includes(profile.ageMonths);
 
   // 2. Enforce strict safety milestone gate
   const readiness = checkBLWReadiness(profile.ageMonths, profile.developmentalMilestones, profile.feedingType);
   if (!readiness.isReady) {
-    if (profile.ageMonths === 5 && profile.feedingType === 'exclusive_breastfeeding') {
+    if (isEarlyWindow && profile.feedingType === 'exclusive_breastfeeding') {
       return {
         success: false,
         safetyStatus: 'BLOCKED_NOT_READY',
@@ -31,14 +41,13 @@ export function getSafeFoodsTool(input: ToolInput) {
       };
     }
 
-    const missing: string[] = [];
-    if (!profile.developmentalMilestones.headControl)              missing.push("hasn't developed full head control yet");
-    if (!profile.developmentalMilestones.canSitWithMinimalSupport) missing.push("isn't sitting upright with minimal support yet");
-    if (!profile.developmentalMilestones.reachAndGrab)             missing.push("hasn't started reaching and grabbing yet");
+    const missing = g.developmentalMilestones.required
+      .filter((key) => !profile.developmentalMilestones[key])
+      .map((key) => `• ${profile.name} ${MILESTONE_MESSAGES[key]}`);
 
     const markerList = missing.length > 0
-      ? missing.map(m => `• ${profile.name} ${m}`).join('\n')
-      : '• does not meet one or more physical readiness markers';
+      ? missing.join('\n')
+      : `• ${profile.name} does not meet one or more physical readiness markers`;
 
     const note =
       `Thank you for taking the time to go through this with me.\n\n` +
@@ -56,10 +65,15 @@ export function getSafeFoodsTool(input: ToolInput) {
     };
   }
 
-  // 3. Query dataset and filter by age, user allergies, and dietary pattern
-  // A 5-month formula baby passed the readiness gate above, so treat them as 6 months
-  // for food eligibility — all dataset foods require minAgeMonths: 6.
-  const effectiveAge = profile.ageMonths === 5 && profile.feedingType === 'formula' ? 6 : profile.ageMonths;
+  // 3. Filter the food list by age, known allergies, and diet type.
+  // A 5-month formula-fed baby who passed the readiness check is treated as 6 months
+  // for food selection — all foods in the dataset require a minimum age of 6 months.
+  const isEarlyWindowApproved =
+    isEarlyWindow && g.ageRules.earlyWindowApprovedFeedingTypes.includes(profile.feedingType ?? '');
+  const effectiveAge = isEarlyWindowApproved
+    ? g.ageRules.earlyWindowEffectiveAgeMonths
+    : profile.ageMonths;
+
   const DIET_LEVEL: Record<string, number> = { standard: 0, vegetarian: 1, vegan: 2 };
   const safeFoods = FOOD_DATASET.filter(food => {
     const satisfiesAge = effectiveAge >= food.minAgeMonths;

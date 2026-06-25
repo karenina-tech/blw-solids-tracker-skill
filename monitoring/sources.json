@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "id": "who-2023-complementary-feeding",
+      "label": "WHO Guideline — Complementary Feeding 6–23 months (2023)",
+      "type": "webpage",
+      "url": "https://www.who.int/publications/i/item/9789240081864"
+    },
+    {
+      "id": "aap-2024-healthychildren-solids",
+      "label": "AAP HealthyChildren — Infant Food and Feeding (2024)",
+      "type": "webpage",
+      "url": "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/Starting-Solid-Foods.aspx"
+    },
+    {
+      "id": "aap-2022-complementary-foods-pubmed",
+      "label": "AAP — Timing of Introduction of Complementary Foods (Eidelman et al., 2022)",
+      "type": "pubmed",
+      "searchQuery": "complementary foods breastfed formula-fed infants AAP Pediatrics 2022"
+    }
+  ]
+}
