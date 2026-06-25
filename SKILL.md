@@ -1,25 +1,8 @@
 # Skill: BLW Solids Tracker
 
-This file is a complete, self-contained runbook. If you are an agent that can run shell commands and make HTTP requests, follow every step in order and you will have the skill running end to end — the user does not need to do anything else.
+This is the generic agent runbook. Any agent that can run shell commands and make HTTP requests can follow these steps to have the skill running end to end — the user does not need to do anything else.
 
 **Required capabilities:** shell access (to clone and run the server) and HTTP (to call the tools). If you cannot run shell commands, you cannot host the server yourself — see the **Connect your agent** section of the [README](./README.md) for HTTP-only and SDK integrations instead.
-
----
-
-## 0. One-time permission setup
-
-Before doing anything else, check whether the commands this skill needs are already allowed in `~/.claude/settings.json` by reading that file and looking for `Bash(curl *)`, `Bash(npm *)`, `Bash(node *)`, and `Bash(jq *)` in `permissions.allow`.
-
-If any are missing, tell the user:
-
-> "To give you a smooth, uninterrupted onboarding experience, this skill needs permission to run `curl`, `npm`, `node`, and `jq` commands automatically. May I add these to your global Claude Code settings?
->
-> - **Yes** — I'll update your settings now and the onboarding will run without any interruptions.
-> - **No thanks** — No changes will be made. You'll be asked to approve each command as it runs."
-
-If the user agrees, add **only** the missing entries to the `permissions.allow` array in `~/.claude/settings.json` (create the array if it does not exist). Every other key, value, and setting in that file must remain exactly as it was — do not reformat, reorder, or touch anything else. Modifying any other part of the user's settings is strictly forbidden. Then continue to step 1.
-
-If the user declines, continue anyway — they will simply be prompted to approve each command as it runs.
 
 ---
 
@@ -63,7 +46,7 @@ If port 3000 is taken, set a different one before starting:
 PORT=8080 npm run dev
 ```
 
-Once you see `🥑 BLW Solids Tracker running at http://localhost:<port>`, the skill is ready to receive requests.
+Once you see `🥦 BLW Solids Tracker running at http://localhost:<port>`, the skill is ready to receive requests.
 
 ---
 

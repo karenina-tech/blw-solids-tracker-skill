@@ -26,9 +26,10 @@
 				--slate-700: #334155;
 				--slate-800: #1e293b;
 				--slate-900: #0f172a;
-				--accent: #6366f1;
-				--accent-light: #eef2ff;
-				--accent-border: #c7d2fe;
+				--accent: #264e36;
+				--accent-light: #52b788;
+				--badge-bg: #fef9e7;
+				--badge-text: #264e36;
 				--green-bg: #f0fdf4;
 				--green-text: #166534;
 				--green-border: #bbf7d0;
@@ -107,7 +108,7 @@
 				width: 42px;
 				height: 42px;
 				background: var(--accent-light);
-				border: 1.5px solid var(--accent-border);
+				border: none;
 				border-radius: 10px;
 				display: flex;
 				align-items: center;
@@ -132,9 +133,9 @@
 				display: inline-flex;
 				align-items: center;
 				gap: 5px;
-				background: var(--accent-light);
-				color: var(--accent);
-				border: 1px solid var(--accent-border);
+				background: var(--badge-bg);
+				color: var(--badge-text);
+				border: none;
 				border-radius: 20px;
 				padding: 4px 10px;
 				font-size: 7.5pt;
@@ -384,7 +385,14 @@
 		<div class="page-wrapper">
 			<div class="header-banner">
 				<div class="header-left">
-					<div class="header-icon">🥑</div>
+					<div class="header-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ecfdf5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M10 13a3 3 0 0 1-2.121-5.121"/>
+							<path d="M15.606 14.204c-3.5 1.5-5.899 4.503-8.899 7.503A1 1 0 0 1 6 22c-2 0-4-2-4-4a1 1 0 0 1 .293-.707c1.911-1.911 3.823-3.578 5.347-5.441"/>
+							<path d="M16.573 14.737A4 4 0 0 1 14 11"/>
+							<path d="M7.14 10.907a4 4 0 1 1 2.756-7.43A4 4 0 0 1 16.7 4.48a2 2 0 0 1 2.82 2.82 4 4 0 0 1 1.002 6.805A4 4 0 1 1 13 16"/>
+						</svg>
+					</div>
 					<div>
 						<div class="header-title">{{BABY_NAME}}'s 30-Day Solid Food Plan</div>
 						<div class="header-sub">

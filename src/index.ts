@@ -17,7 +17,7 @@ const start = async () => {
     // Port 3000 is clean and industry standard for server backends
     const port = parseInt(process.env.PORT ?? '3000', 10);
     await server.listen({ port, host: '0.0.0.0' });
-    console.log(`🥑 BLW Solids Tracker running at http://localhost:${port}`);
+    console.log(`🥦 BLW Solids Tracker running at http://localhost:${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

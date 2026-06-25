@@ -38,7 +38,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 		return reply.code(200).send({
 			command: 'blw-tracker',
 			status: 'initialized',
-			message: "🥑 BLW Solids Tracker Initialized. Let's set up your profile.",
+			message: "🥦 BLW Solids Tracker Initialized. Let's set up your profile.",
 			next_step: 'onboarding',
 			prompt: "What is your baby's name?"
 		});
